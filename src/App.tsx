@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { FormDefinition } from "formfatecore";
 import { FormFate } from "./lib";
+import { CustomInput } from "./components/custom/customInput";
+import { CustomPassword } from "./components/custom/customPassword";
+
+
 
 export default function App() {
   const [signupForm] = useState<FormDefinition>({
@@ -39,7 +43,13 @@ export default function App() {
   return (
     <div className="max-w-lg mx-auto p-6 border rounded-lg shadow-md bg-white">
       <h2 className="text-2xl font-semibold text-center mb-4">Sign Up</h2>
-      <FormFate formDefinition={signupForm} onSubmit={(data) => console.log(data)} />
+      <FormFate formDefinition={signupForm} onSubmit={(data) => console.log(data)} components={
+        {
+          input: CustomInput,
+          password: CustomPassword
+        }
+      }
+      />
     </div>
   );
 }
