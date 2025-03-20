@@ -1,9 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { FormProvider } from "react-hook-form";
-import { FormDefinition, useFormFate } from "./formFateCore";
+import { FormDefinition } from "./formFateCore";
 import { useState } from "react";
-import { FieldRenderer } from "@/lib/FieldRenderer";
+import FormFate from "./lib/FormFate";
 
 export default function App() {
   const [signupForm] = useState<FormDefinition>({
@@ -24,10 +21,13 @@ export default function App() {
       },
       dateOfBirth: { type: "date", title: "Date of Birth", description: "Enter your date of birth" },
       timeOfBirth: { type: "time", title: "Time of Birth", description: "Enter your time of birth" },
+      gender: { type: "radio", title: "Gender", description: "Select your Gender", options: [{ value: "male", label: "Male" }, { value: "Female", label: "Female" }] },
       LinkedIn: { type: "url", title: "LinkedIn", description: "Enter your LinkedIn URL", required: true },
       email: { type: "email", title: "Email", description: "Enter your email address" },
       password: { type: "password", title: "Password", description: "Enter your password" },
       confirmPassword: { type: "password", title: "Confirm Password", description: "Confirm your password" },
+      plan: { type: "select", title: "Plan", description: "Choose your plan", options: [{ value: "free", label: "Free" }, { value: "premium", label: "Premium" }] },
+
       terms: { type: "checkbox", title: "Terms & Conditions", description: "I agree to the terms and conditions" },
     },
     buttons: [
@@ -36,30 +36,10 @@ export default function App() {
     ]
   });
 
-  const form = useFormFate(signupForm);
-  const { handleSubmit, control, formState: { isSubmitting } } = form;
-
-  const onSubmit = async (data) => {
-    console.log("Form submitted with:", data);
-  };
-
   return (
-    <div className="max-w-md mx-auto p-6 border rounded-lg shadow-md bg-white">
+    <div className="max-w-lg mx-auto p-6 border rounded-lg shadow-md bg-white">
       <h2 className="text-2xl font-semibold text-center mb-4">Sign Up</h2>
-      <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {Object.entries(signupForm.properties).map(([key, fieldConfig]) => (
-            <FieldRenderer key={key} control={control} name={key} fieldConfig={fieldConfig} />
-          ))}
-          <div className="space-x-4">
-            {signupForm.buttons.map((button, index) => (
-              <Button key={index} type={button.type} disabled={isSubmitting}>
-                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : button.label}
-              </Button>
-            ))}
-          </div>
-        </form>
-      </FormProvider>
+      <FormFate formDefinition={signupForm} onSubmit={(data) => console.log(data)} />
     </div>
   );
 }
