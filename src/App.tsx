@@ -1,6 +1,6 @@
-import { FormDefinition } from "./formFateCore";
 import { useState } from "react";
-import FormFate from "./lib/FormFate";
+import { FormDefinition } from "formfatecore";
+import { FormFate } from "./lib";
 
 export default function App() {
   const [signupForm] = useState<FormDefinition>({

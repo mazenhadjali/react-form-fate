@@ -9,7 +9,6 @@ export function useFormFate(formDefinition: unknown): UseFormReturn<Record<strin
     // Validate the form definition using the JSON schema
     const parseResult = jsonFormSchema.safeParse(formDefinition);
     if (!parseResult.success) {
-        // You can choose to handle errors differently (e.g., return error state instead)
         throw new Error(
             `Invalid form definition: ${JSON.stringify(
                 parseResult.error.format(),
@@ -19,7 +18,6 @@ export function useFormFate(formDefinition: unknown): UseFormReturn<Record<strin
         );
     }
 
-    // Optionally, you could extract default values from the form definition here if needed.
     const defaultValues = Object.keys(parseResult.data.properties).reduce(
         (acc, key) => {
             if (parseResult.data.properties[key].default) {

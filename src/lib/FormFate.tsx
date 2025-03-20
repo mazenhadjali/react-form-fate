@@ -2,15 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { FormProvider } from "react-hook-form";
 import { FieldRenderer } from "@/lib/FieldRenderer";
-import { FormDefinition, useFormFate } from "@/formFateCore";
+import { FormDefinition, useFormFate } from "formfatecore";
 
 export interface FormFateProps {
     formDefinition: FormDefinition;
     onSubmit: (data: Record<string, unknown>) => void;
 }
 
-export default function FormFate({ formDefinition, onSubmit }: FormFateProps) {
-
+export function FormFate({ formDefinition, onSubmit }: FormFateProps) {
 
     const form = useFormFate(formDefinition);
     const { handleSubmit, control, formState: { isSubmitting } } = form;
@@ -32,3 +31,5 @@ export default function FormFate({ formDefinition, onSubmit }: FormFateProps) {
         </FormProvider>
     );
 }
+
+export default FormFate;
