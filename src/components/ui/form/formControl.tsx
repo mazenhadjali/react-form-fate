@@ -1,24 +1,25 @@
-import React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { useFormField } from "./formField"
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+import React, { forwardRef, HTMLAttributes } from "react";
+import { useFormField } from "./formField";
 
-const FormControl = React.forwardRef<React.ElementRef<typeof Slot>, React.ComponentPropsWithoutRef<typeof Slot>>(({ ...props }, ref) => {
-    const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
+export interface FormControlProps extends HTMLAttributes<HTMLDivElement> { }
 
-    return (
-        <Slot
-            ref={ref}
-            id={formItemId}
-            aria-describedby={
-                !error
-                    ? `${formDescriptionId}`
-                    : `${formDescriptionId} ${formMessageId}`
-            }
-            aria-invalid={!!error}
-            {...props}
-        />
-    )
-})
-FormControl.displayName = "FormControl"
+const FormControl = forwardRef<HTMLDivElement, FormControlProps>(
+    ({ ...props }, ref) => {
+        const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
 
-export { FormControl }
+        return (
+            <div
+                ref={ref}
+                id={formItemId}
+                aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
+                aria-invalid={!!error}
+                {...props}
+            />
+        );
+    }
+);
+
+FormControl.displayName = "FormControl";
+
+export { FormControl };

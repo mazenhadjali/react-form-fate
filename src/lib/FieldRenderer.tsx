@@ -3,13 +3,9 @@ import { FormItem } from "@/components/ui/form/formItem";
 import { FormLabel } from "@/components/ui/form/formLabel";
 import { FormControl } from "@/components/ui/form/formControl";
 import { FormMessage } from "@/components/ui/form/formMessage";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Control } from "react-hook-form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { CustomComponents } from "./interfaces";
+import Input from "@/components/ui/input";
 
 export interface FieldRendererProps {
     control: Control<Record<string, unknown>>;
@@ -22,6 +18,12 @@ export interface FieldRendererProps {
         validator?: (value: any) => string | true;
         default?: string | boolean | number;
         options?: { value: string; label: string }[];
+        conditional?: {
+            field: string;
+            equal?: string;
+            notEqual?: string;
+            state: boolean;
+        }
     };
     components?: CustomComponents;
 }
@@ -34,10 +36,8 @@ const getComponent = (fieldConfig: FieldRendererProps['fieldConfig'], components
         date: components?.input || Input,
         time: components?.input || Input,
         url: components?.input || Input,
-        checkbox: components?.checkbox || Checkbox,
-        select: components?.select || Select,
-        radio: components?.radioGroup || RadioGroup,
     };
+
     return componentMap[fieldConfig.type as keyof typeof componentMap] || null;
 };
 
@@ -45,39 +45,20 @@ const renderComponent = (Component: any, field: any, fieldConfig: FieldRendererP
     if (!Component) return null;
 
     switch (fieldConfig.type) {
-        case "checkbox":
+        case "text":
+        case "email":
+        case "password":
+        case "date":
+        case "time":
+        case "url":
             return (
                 <Component
-                    description={fieldConfig.description}
-                    checked={field.value as boolean}
-                    onCheckedChange={field.onChange}
+                    type={fieldConfig.type}
+                    placeholder={fieldConfig.description}
+                    {...field}
+                    value={field.value as string}
                     ref={field.ref}
                 />
-            );
-        case "select":
-            return (
-                <Component value={field.value as string} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                        <SelectValue placeholder={fieldConfig.description} />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {fieldConfig.options?.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Component>
-            );
-        case "radio":
-            return (
-                <Component value={field.value as string} onValueChange={field.onChange}>
-                    {fieldConfig.options?.map((option) => (
-                        <RadioGroupItem key={option.value} value={option.value}>
-                            <Label>{option.label}</Label>
-                        </RadioGroupItem>
-                    ))}
-                </Component>
             );
         default:
             return (

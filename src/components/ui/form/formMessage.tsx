@@ -1,27 +1,33 @@
-import React from "react"
-import { useFormField } from "./formField"
-import { cn } from "@/lib/utils"
+import React, { forwardRef, HTMLAttributes } from "react";
+import { useFormField } from "./formField";
 
-const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(({ className, children, ...props }, ref) => {
-    const { error, formMessageId } = useFormField()
-    const body = error ? String(error?.message ?? "") : children
+const FormMessage = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
+    ({ style, children, ...props }, ref) => {
+        const { error, formMessageId } = useFormField();
+        const body = error ? String(error?.message ?? "") : children;
 
-    if (!body) {
-        return null
+        if (!body) {
+            return null;
+        }
+
+        return (
+            <p
+                ref={ref}
+                id={formMessageId}
+                style={{
+                    fontSize: "0.8rem",
+                    fontWeight: "bold",
+                    color: "red",
+                    ...style,
+                }}
+                {...props}
+            >
+                {body}
+            </p>
+        );
     }
-
-    return (
-        <p
-            ref={ref}
-            id={formMessageId}
-            className={cn("text-[0.8rem] font-medium text-destructive", className)}
-            {...props}
-        >
-            {body}
-        </p>
-    );
-})
+);
 
 FormMessage.displayName = "FormMessage";
 
-export { FormMessage }
+export { FormMessage };

@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils"
 import React from "react"
 
 type FormItemContextValue = { id: string }
@@ -10,10 +9,20 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 
     return (
         <FormItemContext.Provider value={{ id }}>
-            <div ref={ref} className={cn("space-y-2", className)} {...props} />
+            <div
+                ref={ref}
+                className={className}
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.5rem"
+                }}
+                {...props}
+            />
         </FormItemContext.Provider>
     )
 })
+
 FormItem.displayName = "FormItem"
 
 export { FormItem, FormItemContext }

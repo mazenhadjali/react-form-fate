@@ -1,21 +1,31 @@
-import React from "react"
-import { useFormField } from "./formField"
-import { Label } from "@/components/ui/label"
-import * as LabelPrimitive from "@radix-ui/react-label"
-import { cn } from "@/lib/utils"
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+import React, { forwardRef, LabelHTMLAttributes } from "react";
+import { useFormField } from "./formField";
 
-const FormLabel = React.forwardRef<React.ElementRef<typeof LabelPrimitive.Root>, React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>>(({ className, ...props }, ref) => {
-    const { error, formItemId } = useFormField()
+export interface FormLabelProps extends LabelHTMLAttributes<HTMLLabelElement> { }
 
-    return (
-        <Label
-            ref={ref}
-            className={cn(error && "text-destructive", className)}
-            htmlFor={formItemId}
-            {...props}
-        />
-    )
-})
-FormLabel.displayName = "FormLabel"
+const FormLabel = forwardRef<HTMLLabelElement, FormLabelProps>(
+    ({ style, ...props }, ref) => {
+        const { error, formItemId } = useFormField();
 
-export { FormLabel }
+        return (
+            <label
+                ref={ref}
+                htmlFor={formItemId}
+                {...props}
+                style={{
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    display: "block",
+                    marginBottom: "4px",
+                    color: error ? "red" : "inherit",
+                    ...style,
+                }}
+            />
+        );
+    }
+);
+
+FormLabel.displayName = "FormLabel";
+
+export { FormLabel };
