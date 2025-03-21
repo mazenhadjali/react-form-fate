@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { FormDefinition } from "formfatecore";
 import { FormFate } from "./lib";
 
@@ -66,12 +66,15 @@ export default function App() {
 
 
   return (
-    <div className="max-w-lg mx-auto p-6 border rounded-lg shadow-md bg-white">
-      <h2 className="text-2xl font-semibold text-center mb-4">Sign Up</h2>
-      <FormFate
-        formDefinition={signupForm}
-        onSubmit={onSubmit}
-      />
-    </div>
+    <React.Fragment>
+      <div style={{ width: "400px", margin: "50px auto" }}>
+        <h1 style={{ textAlign: "center" }}>Sign Up</h1>
+        <FormFate
+          formDefinition={signupForm}
+          onSubmit={onSubmit}
+        />
+      </div>
+
+    </React.Fragment>
   );
 }

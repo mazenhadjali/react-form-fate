@@ -71,7 +71,7 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                 })}
 
                 <div style={{ display: "flex", gap: "1rem" }}>
-                    {formDefinition.buttons.map((button, index) => (
+                    {formDefinition?.buttons?.map((button, index) => (
                         <Button
                             key={index}
                             type={button.type}
