@@ -6,6 +6,7 @@ import { FormMessage } from "@/components/ui/form/formMessage";
 import { Control } from "react-hook-form";
 import { CustomComponents } from "./interfaces";
 import Input from "@/components/ui/input";
+import { Option, Select } from "@/components/ui/select";
 
 export interface FieldRendererProps {
     control: Control<Record<string, unknown>>;
@@ -36,6 +37,7 @@ const getComponent = (fieldConfig: FieldRendererProps['fieldConfig'], components
         date: components?.input || Input,
         time: components?.input || Input,
         url: components?.input || Input,
+        select: components?.select || Select,
     };
 
     return componentMap[fieldConfig.type as keyof typeof componentMap] || null;
@@ -59,6 +61,21 @@ const renderComponent = (Component: any, field: any, fieldConfig: FieldRendererP
                     value={field.value as string}
                     ref={field.ref}
                 />
+            );
+        case "select":
+            return (
+                <Component
+                    placeholder={fieldConfig.description}
+                    {...field}
+                    value={field.value as string}
+                    ref={field.ref}
+                >
+                    {fieldConfig.options?.map((option) => (
+                        <Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Option>
+                    ))}
+                </Component>
             );
         default:
             return (

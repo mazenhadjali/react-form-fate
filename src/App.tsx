@@ -8,29 +8,34 @@ export default function App() {
   const [signupForm] = useState<FormDefinition>({
     name: "signupForm",
     properties: {
-      contact: {
-        type: 'text',
-        title: 'Contact',
-        description: 'Enter your contact method',
+      social: {
+        type: 'select',
+        title: 'Social',
+        description: 'Select your social media',
+        options: [
+          { value: 'linkedin', label: 'LinkedIn' },
+          { value: 'github', label: 'GitHub' },
+          { value: 'google', label: 'Google' },
+        ],
         required: true,
       },
       linkedin: {
         type: 'text',
         title: 'LinkedIn',
         description: 'Enter your LinkedIn URL',
-        conditional: { field: 'contact', equal: 'linkedin', state: true },
+        conditional: { field: 'social', equal: 'linkedin', state: true },
       },
       github: {
         type: 'text',
         title: 'GitHub',
         description: 'Enter your GitHub URL',
-        conditional: { field: 'contact', equal: 'github', state: true },
+        conditional: { field: 'social', equal: 'github', state: true },
       },
       google: {
         type: 'text',
         title: 'Google',
         description: 'Enter your Google URL',
-        conditional: { field: 'contact', equal: 'google', state: true },
+        conditional: { field: 'social', equal: 'google', state: true },
       },
       email: {
         type: "email",
