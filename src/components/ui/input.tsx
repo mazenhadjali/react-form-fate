@@ -3,7 +3,7 @@ import React, { forwardRef, InputHTMLAttributes } from "react";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> { }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(({ className, style, ...props }, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>(({ className, style, ...props }, ref) => {
     return (
         <input
             ref={ref}

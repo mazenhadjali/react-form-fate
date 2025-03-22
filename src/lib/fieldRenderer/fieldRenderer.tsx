@@ -1,12 +1,13 @@
-import { FormField } from "@/components/ui/form/formField";
-import { FormItem } from "@/components/ui/form/formItem";
+import { FormField } from "@/lib/fieldRenderer/formField";
+import { FormItem } from "@/lib/fieldRenderer/formItem";
 import { FormLabel } from "@/components/ui/form/formLabel";
-import { FormControl } from "@/components/ui/form/formControl";
+import { FormControl } from "@/lib/fieldRenderer/formControl";
 import { FormMessage } from "@/components/ui/form/formMessage";
-import { Control } from "react-hook-form";
-import { CustomComponents } from "./interfaces";
-import Input from "@/components/ui/input";
+import { Control, ControllerRenderProps } from "react-hook-form";
 import { Option, Select } from "@/components/ui/select";
+import { CustomComponents } from "@/lib/interfaces";
+import { Input } from "@/components/ui";
+import React from "react";
 
 export interface FieldRendererProps {
     control: Control<Record<string, unknown>>;
@@ -16,7 +17,7 @@ export interface FieldRendererProps {
         title: string;
         description?: string;
         required?: boolean;
-        validator?: (value: any) => string | true;
+        validator?: (value: unknown) => string | true;
         default?: string | boolean | number;
         options?: { value: string; label: string }[];
         conditional?: {
@@ -43,7 +44,7 @@ const getComponent = (fieldConfig: FieldRendererProps['fieldConfig'], components
     return componentMap[fieldConfig.type as keyof typeof componentMap] || null;
 };
 
-const renderComponent = (Component: any, field: any, fieldConfig: FieldRendererProps['fieldConfig']) => {
+const renderComponent = (Component: React.ElementType, field: ControllerRenderProps<Record<string, unknown>, string>, fieldConfig: FieldRendererProps['fieldConfig']) => {
     if (!Component) return null;
 
     switch (fieldConfig.type) {
@@ -101,7 +102,7 @@ export function FieldRenderer({ control, name, fieldConfig, components }: FieldR
                 required: fieldConfig.required ? `${fieldConfig.title} is required` : undefined,
                 validate: fieldConfig.validator,
             }}
-            render={({ field }) => (
+            render={({ field }: { field: ControllerRenderProps<Record<string, unknown>, string> }) => (
                 <FormItem>
                     <FormLabel>{fieldConfig.title}</FormLabel>
                     <FormControl>{renderComponent(Component, field, fieldConfig)}</FormControl>

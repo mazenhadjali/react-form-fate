@@ -1,12 +1,12 @@
 import { Button, ButtonProps } from "@/components/ui/button";
 import { FormProvider } from "react-hook-form";
-import { FieldRenderer, FieldRendererProps } from "@/lib/FieldRenderer";
 import { FormDefinition, useFormFate } from "formfatecore";
 import { CustomComponents } from "./interfaces";
+import { FieldRenderer, FieldRendererProps } from "./fieldRenderer/fieldRenderer";
 
 export interface FormFateProps {
     formDefinition: FormDefinition;
-    onSubmit?: (data: Record<string, unknown>) => void; // Make onSubmit optional
+    onSubmit?: (data: Record<string, unknown>) => void;
     components?: CustomComponents;
 }
 
@@ -34,31 +34,34 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
         <FormProvider {...form}>
             <form onSubmit={handleSubmit(submitHandler)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 {Object.entries(formDefinition.properties).map(([key, fieldConfig]) => {
-                    // Check if the field has a conditional logic
                     const conditional = fieldConfig.conditional;
+
                     if (conditional) {
                         const { field, equal, notEqual, state } = conditional;
 
-                        // Ensure field value exists in the form values
-                        const fieldValue = formValues[field];
+                        // Ensure field value exists in the form values, defaulting to null or a safe value
+                        const fieldValue = formValues[field] ?? null; // or use an appropriate default based on your case
 
-                        // Default to condition not met if no condition is provided
+                        console.log("Field Value check:", fieldValue);
+
                         let conditionMet = false;
 
-                        // Evaluate the condition based on the "equal" or "notEqual" operator
                         if (equal !== undefined) {
                             conditionMet = fieldValue === equal;
                         } else if (notEqual !== undefined) {
                             conditionMet = fieldValue !== notEqual;
                         }
 
-                        // If the condition is met, then we compare with the "state"
+                        // If fieldValue is undefined and the condition expects a specific value, prevent unintended matches
+                        if (fieldValue === undefined && (equal !== undefined || notEqual !== undefined)) {
+                            conditionMet = false;
+                        }
+
                         if (conditionMet !== state) {
-                            return null; // Skip rendering this field if the condition is not satisfied
+                            return null;
                         }
                     }
 
-                    // Render the field if no condition exists or condition is satisfied
                     return (
                         <FieldRenderer
                             key={key}
@@ -69,6 +72,7 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                         />
                     );
                 })}
+
 
                 <div style={{ display: "flex", gap: "1rem" }}>
                     {formDefinition?.buttons?.map((button, index) => (

@@ -13,11 +13,14 @@ export default function App() {
         title: 'Social',
         description: 'Select your social media',
         options: [
+          { value: '', label: '' },
           { value: 'linkedin', label: 'LinkedIn' },
           { value: 'github', label: 'GitHub' },
           { value: 'google', label: 'Google' },
+          { value: 'other', label: 'Other' },
         ],
         required: true,
+        default: '',
       },
       linkedin: {
         type: 'text',

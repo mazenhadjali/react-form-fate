@@ -35,10 +35,9 @@ const buttonStyles = {
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: keyof typeof buttonStyles.variants;
   size?: keyof typeof buttonStyles.sizes;
-  asChild?: boolean;
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ variant = "default", size = "default", asChild = false, style, className, ...props }, ref) => {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ variant = "default", size = "default", style, className, ...props }, ref) => {
 
   return (
     <button
@@ -58,4 +57,4 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ variant = "default"
 
 Button.displayName = "Button";
 
-export { Button };
+export default Button;

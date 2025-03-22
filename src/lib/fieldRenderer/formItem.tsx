@@ -18,7 +18,10 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
                     gap: "0.5rem"
                 }}
                 {...props}
-            />
+            >
+                {props.children}
+            </div>
+
         </FormItemContext.Provider>
     )
 })
