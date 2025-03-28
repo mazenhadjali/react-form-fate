@@ -7,7 +7,7 @@ The `FormFate` library is a powerful and flexible form rendering library that al
 To use the `FormFate` library, install the required dependencies:
 
 ```bash
-npm install formfatecore react-hook-form
+npm install react-form-fate
 ```
 
 ## Usage
@@ -17,7 +17,7 @@ npm install formfatecore react-hook-form
 To use the `FormFate` component, import it into your React application:
 
 ```tsx
-import { FormFate } from "./lib/FormFate";
+import { FormFate } from 'react-form-fate'
 ```
 
 ### Defining a Form Schema
@@ -114,10 +114,10 @@ Use the `FormFate` component to render the form based on the schema:
 
 ```tsx
 import React, { useState } from "react";
-import { FormFate } from "./lib/FormFate";
+import { FormFate } from 'react-form-fate'
 
 export default function App() {
-  const [signupForm] = useState(signupForm);
+  const [signupForm] = useState(signupForm); // import your signupform or pass it directly to the FormFate Component
 
   const onSubmit = (data: Record<string, unknown>) => {
     console.log("Form Submitted Data:", data);
