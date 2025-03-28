@@ -21,7 +21,10 @@ const FormLabel = forwardRef<HTMLLabelElement, FormLabelProps>(
                     color: error ? "red" : "inherit",
                     ...style,
                 }}
-            />
+            >
+                {props.children}
+            </label>
+
         );
     }
 );

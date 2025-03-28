@@ -4,10 +4,12 @@ import { FormLabel } from "@/components/ui/form/formLabel";
 import { FormControl } from "@/lib/fieldRenderer/formControl";
 import { FormMessage } from "@/components/ui/form/formMessage";
 import { Control, ControllerRenderProps } from "react-hook-form";
-import { Option, Select } from "@/components/ui/select";
+import { Select, SelectOption } from "@/components/ui/select";
 import { CustomComponents } from "@/lib/interfaces";
 import { Input } from "@/components/ui";
 import React from "react";
+import RadioGroup from "@/components/ui/radio/radioGroup";
+import RadioItem from "@/components/ui/radio/radioItem";
 
 export interface FieldRendererProps {
     control: Control<Record<string, unknown>>;
@@ -30,7 +32,7 @@ export interface FieldRendererProps {
     components?: CustomComponents;
 }
 
-const getComponent = (fieldConfig: FieldRendererProps['fieldConfig'], components?: CustomComponents) => {
+const getComponents = (components?: CustomComponents) => {
     const componentMap = {
         text: components?.input || Input,
         email: components?.input || Input,
@@ -39,12 +41,20 @@ const getComponent = (fieldConfig: FieldRendererProps['fieldConfig'], components
         time: components?.input || Input,
         url: components?.input || Input,
         select: components?.select || Select,
+        selectOption: components?.selectOption || SelectOption,
+        radio: components?.radio || RadioGroup,
+        radioItem: components?.radioItem || RadioItem,
     };
-
-    return componentMap[fieldConfig.type as keyof typeof componentMap] || null;
+    return componentMap;
 };
 
-const renderComponent = (Component: React.ElementType, field: ControllerRenderProps<Record<string, unknown>, string>, fieldConfig: FieldRendererProps['fieldConfig']) => {
+const renderComponent = (
+    componentMap: Record<string, React.ElementType>,
+    field: ControllerRenderProps<Record<string, unknown>, string>,
+    fieldConfig: FieldRendererProps['fieldConfig']
+) => {
+    const Component = componentMap[fieldConfig.type as keyof typeof componentMap];
+
     if (!Component) return null;
 
     switch (fieldConfig.type) {
@@ -72,9 +82,22 @@ const renderComponent = (Component: React.ElementType, field: ControllerRenderPr
                     ref={field.ref}
                 >
                     {fieldConfig.options?.map((option) => (
-                        <Option key={option.value} value={option.value}>
+                        <SelectOption key={option.value} value={option.value}>
                             {option.label}
-                        </Option>
+                        </SelectOption>
+                    ))}
+                </Component>
+            );
+        case "radio":
+            return (
+                <Component
+                    value={field.value as string}
+                    ref={field.ref}
+                >
+                    {fieldConfig.options?.map((option) => (
+                        <RadioItem key={option.value} {...field} value={option.value}>
+                            {option.label}
+                        </RadioItem>
                     ))}
                 </Component>
             );
@@ -92,8 +115,7 @@ const renderComponent = (Component: React.ElementType, field: ControllerRenderPr
 };
 
 export function FieldRenderer({ control, name, fieldConfig, components }: FieldRendererProps) {
-    const Component = getComponent(fieldConfig, components);
-
+    const componentMap = getComponents(components);
     return (
         <FormField
             control={control}
@@ -102,13 +124,15 @@ export function FieldRenderer({ control, name, fieldConfig, components }: FieldR
                 required: fieldConfig.required ? `${fieldConfig.title} is required` : undefined,
                 validate: fieldConfig.validator,
             }}
-            render={({ field }: { field: ControllerRenderProps<Record<string, unknown>, string> }) => (
-                <FormItem>
-                    <FormLabel>{fieldConfig.title}</FormLabel>
-                    <FormControl>{renderComponent(Component, field, fieldConfig)}</FormControl>
-                    <FormMessage />
-                </FormItem>
-            )}
+            render={({ field }: { field: ControllerRenderProps<Record<string, unknown>, string> }) => {
+                return (
+                    <FormItem>
+                        <FormLabel>{fieldConfig.title}</FormLabel>
+                        <FormControl>{renderComponent(componentMap, field, fieldConfig)}</FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )
+            }}
         />
     );
 }

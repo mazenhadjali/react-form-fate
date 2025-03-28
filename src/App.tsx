@@ -8,6 +8,31 @@ export default function App() {
   const [signupForm] = useState<FormDefinition>({
     name: "signupForm",
     properties: {
+      firstName: {
+        type: "text",
+        title: "First Name",
+        description: "Enter your first name",
+        required: true,
+        default: "",
+      },
+      lastName: {
+        type: "text",
+        title: "Last Name",
+        description: "Enter your last name",
+        required: true,
+        default: "",
+      },
+      gender: {
+        type: "radio",
+        title: "Gender",
+        options: [
+          { value: 'male', label: 'Male' },
+          { value: 'female', label: 'Female' },
+          { value: 'other', label: 'Other' },
+        ],
+        description: "gender",
+        required: true,
+      },
       social: {
         type: 'select',
         title: 'Social',
@@ -55,6 +80,7 @@ export default function App() {
         title: "Confirm Password",
         description: "Confirm your password",
       },
+
     },
     buttons: [
       { type: "submit", label: "Sign Up" },

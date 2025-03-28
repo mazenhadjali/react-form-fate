@@ -14,7 +14,7 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
     const form = useFormFate(formDefinition);
     const { handleSubmit, control, setValue, watch } = form;
 
-    const formValues = watch(); // Watch form values to evaluate conditions dynamically
+    const formValues = watch();
 
     const handleReset = () => {
         Object.keys(formDefinition.properties).forEach((key) => {
@@ -41,8 +41,6 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
 
                         // Ensure field value exists in the form values, defaulting to null or a safe value
                         const fieldValue = formValues[field] ?? null; // or use an appropriate default based on your case
-
-                        console.log("Field Value check:", fieldValue);
 
                         let conditionMet = false;
 
