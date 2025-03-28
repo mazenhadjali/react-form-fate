@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FormDefinition } from "formfatecore";
 import { FormFate } from "./lib";
+import { Input } from "./components/ui";
 
 
 
@@ -80,7 +81,14 @@ export default function App() {
         title: "Confirm Password",
         description: "Confirm your password",
       },
-
+      mazen: {
+        type: "mazen",
+        title: "Mazen",
+        component: Input,
+        description: "Enter your mazen",
+        required: true,
+        default: false,
+      },
     },
     buttons: [
       { type: "submit", label: "Sign Up" },
@@ -101,6 +109,15 @@ export default function App() {
         <FormFate
           formDefinition={signupForm}
           onSubmit={onSubmit}
+          components={{
+            mazen: ({ fieldConfig, ...props }) => (
+              <div>
+                <input {...props} type="checkbox" defaultChecked={fieldConfig?.default} />
+                <label>{fieldConfig.title}</label>
+              </div>
+            ),
+          }
+          }
         />
       </div>
 

@@ -34,6 +34,7 @@ export interface FieldRendererProps {
 
 const getComponents = (components?: CustomComponents) => {
     const componentMap = {
+        ...components,
         text: components?.input || Input,
         email: components?.input || Input,
         password: components?.password || Input,
@@ -101,17 +102,11 @@ const renderComponent = (
                     ))}
                 </Component>
             );
-        default:
-            return (
-                <Component
-                    type={fieldConfig.type}
-                    placeholder={fieldConfig.description}
-                    {...field}
-                    value={field.value as string}
-                    ref={field.ref}
-                />
-            );
     }
+
+    return componentMap[fieldConfig.type] ? (
+        <Component {...field} fieldConfig={fieldConfig} ref={field.ref} />
+    ) : null;
 };
 
 export function FieldRenderer({ control, name, fieldConfig, components }: FieldRendererProps) {
