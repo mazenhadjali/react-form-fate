@@ -3,8 +3,6 @@ import { FormDefinition } from "formfatecore";
 import { FormFate } from "./lib";
 import { Input } from "./components/ui";
 
-
-
 export default function App() {
   const [signupForm] = useState<FormDefinition>({
     name: "signupForm",
@@ -81,13 +79,19 @@ export default function App() {
         title: "Confirm Password",
         description: "Confirm your password",
       },
-      mazen: {
-        type: "mazen",
-        title: "Mazen",
+      esmfiled: {
+        tye: "mazen",
+        title: "esmfilfzefze   ed",
         component: Input,
         description: "Enter your mazen",
         required: true,
-        default: false,
+        defaultValue: "mazentest default value",
+        validator: (value: string) => {
+          if (value.length < 3) {
+            return "Mazen must be at least 3 characters long";
+          }
+          return true;
+        }
       },
     },
     buttons: [
@@ -110,14 +114,19 @@ export default function App() {
           formDefinition={signupForm}
           onSubmit={onSubmit}
           components={{
-            mazen: ({ fieldConfig, ...props }) => (
-              <div>
-                <input {...props} type="checkbox" defaultChecked={fieldConfig?.default} />
-                <label>{fieldConfig.title}</label>
-              </div>
-            ),
-          }
-          }
+            mazen: ({ fieldConfig, value, ...props }) => {
+              console.log("mazen");
+              // console.log("fieldConfig", fieldConfig);
+              // console.log("props", props);
+              return (
+                <div>
+                  <input {...props} type="text" defaultValue={fieldConfig.defaultValue} />
+                  <label>{fieldConfig.title}</label>
+                  {value}
+                </div>
+              )
+            },
+          }}
         />
       </div>
 
