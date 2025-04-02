@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { forwardRef, LabelHTMLAttributes } from "react";
-import { useFormField } from "../../../lib/fieldRenderer/formField";
+import { useFormField } from "./formField";
 
 export interface FormLabelProps extends LabelHTMLAttributes<HTMLLabelElement> { }
 

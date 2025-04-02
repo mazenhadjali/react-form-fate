@@ -32,7 +32,7 @@
     "dist"
   ],
   "dependencies": {
-    "formfatecore": "^0.7.2",
+    "formfatecore": "^0.8.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2"

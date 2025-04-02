@@ -1,8 +1,8 @@
 import { FormField } from "@/lib/fieldRenderer/formField";
 import { FormItem } from "@/lib/fieldRenderer/formItem";
-import { FormLabel } from "@/components/ui/form/formLabel";
+import { FormLabel } from "@/lib/fieldRenderer/formLabel";
 import { FormControl } from "@/lib/fieldRenderer/formControl";
-import { FormMessage } from "@/components/ui/form/formMessage";
+import { FormMessage } from "@/lib/fieldRenderer/formMessage";
 import { Control, ControllerRenderProps } from "react-hook-form";
 import { Select, SelectOption } from "@/components/ui/select";
 import { CustomComponents } from "@/lib/interfaces";
@@ -46,6 +46,7 @@ const getComponents = (components?: CustomComponents) => {
         radio: components?.radio || RadioGroup,
         radioItem: components?.radioItem || RadioItem,
     };
+    // console.log("Component Map:", componentMap);
     return componentMap;
 };
 
@@ -105,7 +106,7 @@ const renderComponent = (
     }
 
     return componentMap[fieldConfig.type] ? (
-        <Component {...field} fieldConfig={fieldConfig} ref={field.ref} />
+        <Component field={field} fieldConfig={fieldConfig} ref={field.ref} />
     ) : null;
 };
 

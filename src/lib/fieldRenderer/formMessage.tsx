@@ -1,5 +1,5 @@
 import React, { forwardRef, HTMLAttributes } from "react";
-import { useFormField } from "../../../lib/fieldRenderer/formField";
+import { useFormField } from "./formField";
 
 const FormMessage = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
     ({ style, children, ...props }, ref) => {

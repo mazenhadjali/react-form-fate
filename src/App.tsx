@@ -80,18 +80,11 @@ export default function App() {
         description: "Confirm your password",
       },
       esmfiled: {
-        tye: "mazen",
-        title: "esmfilfzefze   ed",
-        component: Input,
-        description: "Enter your mazen",
+        type: "mycustomtype",
+        title: "my new custom type",
+        description: "Enter your esmfiled",
         required: true,
-        defaultValue: "mazentest default value",
-        validator: (value: string) => {
-          if (value.length < 3) {
-            return "Mazen must be at least 3 characters long";
-          }
-          return true;
-        }
+        component: Input,
       },
     },
     buttons: [
@@ -114,18 +107,26 @@ export default function App() {
           formDefinition={signupForm}
           onSubmit={onSubmit}
           components={{
-            mazen: ({ fieldConfig, value, ...props }) => {
-              console.log("mazen");
-              // console.log("fieldConfig", fieldConfig);
-              // console.log("props", props);
+            "mycustomtype": ({ fieldConfig, ...props }) => {
               return (
-                <div>
-                  <input {...props} type="text" defaultValue={fieldConfig.defaultValue} />
-                  <label>{fieldConfig.title}</label>
-                  {value}
+                <div style={{ marginBottom: "1rem" }}>
+                  <label htmlFor={props.name} style={{ fontSize: "20px", fontWeight: "bold" }}>
+                    {fieldConfig.title}
+                  </label>
+                  <input
+                    type="text"
+                    {...props}
+                    style={{
+                      padding: "0.5rem",
+                      borderRadius: "0.375rem",
+                      border: "1px solid #ccc",
+                      width: "100%",
+                    }}
+                    placeholder={props.description}
+                  />
                 </div>
-              )
-            },
+              );
+            }
           }}
         />
       </div>

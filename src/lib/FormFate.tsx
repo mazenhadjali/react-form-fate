@@ -3,6 +3,7 @@ import { FormProvider } from "react-hook-form";
 import { FormDefinition, useFormFate } from "formfatecore";
 import { CustomComponents } from "./interfaces";
 import { FieldRenderer, FieldRendererProps } from "./fieldRenderer/fieldRenderer";
+import React from "react";
 
 export interface FormFateProps {
     formDefinition: FormDefinition;
@@ -31,8 +32,8 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
     const submitHandler = onSubmit || defaultOnSubmit;
 
     return (
-        <FormProvider {...form}>
-            <form onSubmit={handleSubmit(submitHandler)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <React.Fragment>
+            <FormProvider {...form}>
                 {Object.entries(formDefinition.properties).map(([key, fieldConfig]) => {
                     const conditional = fieldConfig.conditional;
 
@@ -85,13 +86,14 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                                 cursor: "pointer",
                                 transition: "background-color 0.2s",
                             }}
-                            onClick={button.type === "reset" ? handleReset : undefined}
+                            onClick={button.type === "submit" ? handleSubmit(submitHandler) : button.type === "reset" ? handleReset : undefined}
                         >
                             {button.label}
                         </Button>
                     ))}
                 </div>
-            </form>
-        </FormProvider>
+            </FormProvider>
+        </React.Fragment>
+
     );
 }
