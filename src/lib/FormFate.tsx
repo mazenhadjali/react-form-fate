@@ -34,7 +34,7 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
     return (
         <React.Fragment>
             <FormProvider {...form}>
-                {Object.entries(formDefinition.properties).map(([key, fieldConfig]) => {
+                {Object.entries(formDefinition.properties).map(([key, fieldConfig]: [string, any]) => {
                     const conditional = fieldConfig.conditional;
 
                     if (conditional) {
@@ -74,7 +74,7 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
 
 
                 <div style={{ display: "flex", gap: "1rem" }}>
-                    {formDefinition?.buttons?.map((button, index) => (
+                    {formDefinition?.buttons?.map((button: any, index: any) => (
                         <Button
                             key={index}
                             type={button.type}
