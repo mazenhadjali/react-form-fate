@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { ElementType, useState } from "react";
 import { FormDefinition } from "formfatecore";
-import { FormFate } from "./lib";
-import { Input } from "./components/ui";
+import { CustomComponents, FormFate } from "./lib";
+import { Input } from "./lib/elements";
 
 export default function App() {
   const [signupForm] = useState<FormDefinition>({
@@ -79,7 +79,7 @@ export default function App() {
         title: "Confirm Password",
         description: "Confirm your password",
       },
-      esmfiled: {
+      fieldnameexample: {
         type: "mycustomtype",
         title: "my new custom type",
         description: "Enter your esmfiled",
@@ -92,6 +92,29 @@ export default function App() {
       { type: "reset", label: "Reset", variant: "destructive" }
     ]
   });
+
+  const customComponents: CustomComponents = {
+    "mycustomtype": ({ fieldConfig, ...props }) => {
+      return (
+        <div style={{ marginBottom: "1rem" }}>
+          <label htmlFor={props.name} style={{ fontSize: "20px", fontWeight: "bold" }}>
+            {fieldConfig.title}
+          </label>
+          <input
+            type="text"
+            {...props}
+            style={{
+              padding: "0.5rem",
+              borderRadius: "0.375rem",
+              border: "1px solid #ccc",
+              width: "100%",
+            }}
+            placeholder={props.description}
+          />
+        </div>
+      );
+    }
+  }
 
   const onSubmit = (data: Record<string, unknown>) => {
     console.log("passed data", data);
@@ -106,28 +129,7 @@ export default function App() {
         <FormFate
           formDefinition={signupForm}
           onSubmit={onSubmit}
-          components={{
-            "mycustomtype": ({ fieldConfig, ...props }) => {
-              return (
-                <div style={{ marginBottom: "1rem" }}>
-                  <label htmlFor={props.name} style={{ fontSize: "20px", fontWeight: "bold" }}>
-                    {fieldConfig.title}
-                  </label>
-                  <input
-                    type="text"
-                    {...props}
-                    style={{
-                      padding: "0.5rem",
-                      borderRadius: "0.375rem",
-                      border: "1px solid #ccc",
-                      width: "100%",
-                    }}
-                    placeholder={props.description}
-                  />
-                </div>
-              );
-            }
-          }}
+          components={customComponents}
         />
       </div>
 

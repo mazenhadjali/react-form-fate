@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/lib/elements/button";
 import { FormProvider } from "react-hook-form";
 import { FormDefinition, useFormFate } from "formfatecore";
 import { CustomComponents } from "./interfaces";

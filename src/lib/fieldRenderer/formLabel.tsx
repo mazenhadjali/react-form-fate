@@ -24,7 +24,6 @@ const FormLabel = forwardRef<HTMLLabelElement, FormLabelProps>(
             >
                 {props.children}
             </label>
-
         );
     }
 );

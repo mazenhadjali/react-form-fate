@@ -4,12 +4,12 @@ import { FormLabel } from "@/lib/fieldRenderer/formLabel";
 import { FormControl } from "@/lib/fieldRenderer/formControl";
 import { FormMessage } from "@/lib/fieldRenderer/formMessage";
 import { Control, ControllerRenderProps } from "react-hook-form";
-import { Select, SelectOption } from "@/components/ui/select";
+import { Select, SelectOption } from "@/lib/elements/select";
 import { CustomComponents } from "@/lib/interfaces";
-import { Input } from "@/components/ui";
+import { Input } from "@/lib/elements";
 import React from "react";
-import RadioGroup from "@/components/ui/radio/radioGroup";
-import RadioItem from "@/components/ui/radio/radioItem";
+import RadioGroup from "@/lib/elements/radio/radioGroup";
+import RadioItem from "@/lib/elements/radio/radioItem";
 
 export interface FieldRendererProps {
     control: Control<Record<string, unknown>>;
