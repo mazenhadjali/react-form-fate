@@ -14,7 +14,6 @@ export interface FormFateProps {
 export function FormFate({ formDefinition, onSubmit, components }: FormFateProps) {
     const form = useFormFate(formDefinition);
     const { handleSubmit, control, setValue, watch } = form;
-
     const formValues = watch();
 
     const handleReset = () => {
@@ -23,57 +22,63 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
         });
     };
 
-    // Default onSubmit logic if not provided
     const defaultOnSubmit = (data: Record<string, unknown>) => {
         console.log("Form Data Submitted:", data);
     };
 
-    // Use the provided onSubmit or default one
     const submitHandler = onSubmit || defaultOnSubmit;
+
+    const renderFields = (properties: FormDefinition["properties"]) => {
+        return Object.entries(properties).map(([key, fieldConfig]: [string, FormDefinition["properties"]]) => {
+            const conditional = fieldConfig.conditional;
+
+            // Handle conditional display
+            if (conditional) {
+                const { field, equal, notEqual, state } = conditional;
+                const fieldValue = formValues[field] ?? null;
+                let conditionMet = false;
+
+                if (equal !== undefined) conditionMet = fieldValue === equal;
+                else if (notEqual !== undefined) conditionMet = fieldValue !== notEqual;
+
+                if (fieldValue === undefined && (equal !== undefined || notEqual !== undefined)) {
+                    conditionMet = false;
+                }
+
+                if (conditionMet !== state) return null;
+            }
+
+            // Handle "block" type fields
+            if (fieldConfig.type === "block" && fieldConfig.properties) {
+                return (
+                    <div key={key} style={{ marginBottom: "1.5rem" }}>
+                        {fieldConfig.title && <h3 className="text-lg font-semibold mb-2">{fieldConfig.title}</h3>}
+                        <div className={fieldConfig.className} style={fieldConfig.style}>
+                            {renderFields(fieldConfig.properties)}
+                        </div>
+                    </div>
+                );
+            }
+
+            // Render normal field
+            return (
+                <FieldRenderer
+                    key={key}
+                    control={control}
+                    name={key}
+                    fieldConfig={fieldConfig as FieldRendererProps["fieldConfig"]}
+                    components={components}
+                />
+            );
+        });
+    };
 
     return (
         <React.Fragment>
             <FormProvider {...form}>
-                {Object.entries(formDefinition.properties).map(([key, fieldConfig]: [string, any]) => {
-                    const conditional = fieldConfig.conditional;
+                {renderFields(formDefinition.properties)}
 
-                    if (conditional) {
-                        const { field, equal, notEqual, state } = conditional;
-
-                        // Ensure field value exists in the form values, defaulting to null or a safe value
-                        const fieldValue = formValues[field] ?? null; // or use an appropriate default based on your case
-
-                        let conditionMet = false;
-
-                        if (equal !== undefined) {
-                            conditionMet = fieldValue === equal;
-                        } else if (notEqual !== undefined) {
-                            conditionMet = fieldValue !== notEqual;
-                        }
-
-                        // If fieldValue is undefined and the condition expects a specific value, prevent unintended matches
-                        if (fieldValue === undefined && (equal !== undefined || notEqual !== undefined)) {
-                            conditionMet = false;
-                        }
-
-                        if (conditionMet !== state) {
-                            return null;
-                        }
-                    }
-
-                    return (
-                        <FieldRenderer
-                            key={key}
-                            control={control}
-                            name={key}
-                            fieldConfig={fieldConfig as FieldRendererProps["fieldConfig"]}
-                            components={components}
-                        />
-                    );
-                })}
-
-
-                <div style={{ display: "flex", gap: "1rem" }}>
+                <div style={{ display: "flex", gap: "1rem", paddingTop: "1rem" }}>
                     {formDefinition?.buttons?.map((button: any, index: any) => (
                         <Button
                             key={index}
@@ -85,8 +90,15 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                                 fontWeight: "bold",
                                 cursor: "pointer",
                                 transition: "background-color 0.2s",
+                                ...button.style,
                             }}
-                            onClick={button.type === "submit" ? handleSubmit(submitHandler) : button.type === "reset" ? handleReset : undefined}
+                            onClick={
+                                button.type === "submit"
+                                    ? handleSubmit(submitHandler)
+                                    : button.type === "reset"
+                                        ? handleReset
+                                        : undefined
+                            }
                         >
                             {button.label}
                         </Button>
@@ -94,6 +106,5 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                 </div>
             </FormProvider>
         </React.Fragment>
-
     );
 }

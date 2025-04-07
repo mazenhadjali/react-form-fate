@@ -7,91 +7,120 @@ export default function App() {
   const [signupForm] = useState<FormDefinition>({
     name: "signupForm",
     properties: {
-      firstName: {
-        type: "text",
-        title: "First Name",
-        description: "Enter your first name",
-        required: true,
-        default: "",
+      personalInfo: {
+        type: "block",
+        title: "Personal Information",
+        properties: {
+          fieldname: {
+            type: "text",
+            title: "First Name",
+            description: "Enter your first name",
+            required: true,
+            default: "",
+          },
+          lastName: {
+            type: "text",
+            title: "Last Name",
+            description: "Enter your last name",
+            required: true,
+            default: "",
+          },
+          gender: {
+            type: "radio",
+            title: "Gender",
+            description: "Gender",
+            required: true,
+            options: [
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
+              { value: "other", label: "Other" },
+            ],
+          },
+        },
       },
-      lastName: {
-        type: "text",
-        title: "Last Name",
-        description: "Enter your last name",
-        required: true,
-        default: "",
+
+      socialLinks: {
+        type: "block",
+        title: "Social Media Info",
+        properties: {
+          social: {
+            type: "select",
+            title: "Social",
+            description: "Select your social media",
+            required: true,
+            default: "",
+            options: [
+              { value: "", label: "" },
+              { value: "linkedin", label: "LinkedIn" },
+              { value: "github", label: "GitHub" },
+              { value: "google", label: "Google" },
+              { value: "other", label: "Other" },
+            ],
+          },
+          linkedin: {
+            type: "text",
+            title: "LinkedIn",
+            description: "Enter your LinkedIn URL",
+            conditional: { field: "social", equal: "linkedin", state: true },
+          },
+          github: {
+            type: "text",
+            title: "GitHub",
+            description: "Enter your GitHub URL",
+            conditional: { field: "social", equal: "github", state: true },
+          },
+          google: {
+            type: "text",
+            title: "Google",
+            description: "Enter your Google URL",
+            conditional: { field: "social", equal: "google", state: true },
+          },
+        },
       },
-      gender: {
-        type: "radio",
-        title: "Gender",
-        options: [
-          { value: 'male', label: 'Male' },
-          { value: 'female', label: 'Female' },
-          { value: 'other', label: 'Other' },
-        ],
-        description: "gender",
-        required: true,
+
+      accountInfo: {
+        type: "block",
+        title: "Account Credentials",
+        properties: {
+          email: {
+            type: "email",
+            title: "Email",
+            description: "Enter your email address",
+          },
+          password: {
+            type: "password",
+            title: "Password",
+            description: "Enter your password",
+          },
+          confirmPassword: {
+            type: "password",
+            title: "Confirm Password",
+            description: "Confirm your password",
+          },
+        },
       },
-      social: {
-        type: 'select',
-        title: 'Social',
-        description: 'Select your social media',
-        options: [
-          { value: '', label: '' },
-          { value: 'linkedin', label: 'LinkedIn' },
-          { value: 'github', label: 'GitHub' },
-          { value: 'google', label: 'Google' },
-          { value: 'other', label: 'Other' },
-        ],
-        required: true,
-        default: '',
-      },
-      linkedin: {
-        type: 'text',
-        title: 'LinkedIn',
-        description: 'Enter your LinkedIn URL',
-        conditional: { field: 'social', equal: 'linkedin', state: true },
-      },
-      github: {
-        type: 'text',
-        title: 'GitHub',
-        description: 'Enter your GitHub URL',
-        conditional: { field: 'social', equal: 'github', state: true },
-      },
-      google: {
-        type: 'text',
-        title: 'Google',
-        description: 'Enter your Google URL',
-        conditional: { field: 'social', equal: 'google', state: true },
-      },
-      email: {
-        type: "email",
-        title: "Email",
-        description: "Enter your email address",
-      },
-      password: {
-        type: "password",
-        title: "Password",
-        description: "Enter your password",
-      },
-      confirmPassword: {
-        type: "password",
-        title: "Confirm Password",
-        description: "Confirm your password",
-      },
-      fieldnameexample: {
-        type: "mycustomtype",
-        title: "my new custom type",
-        description: "Enter your esmfiled",
-        required: true,
-        component: Input,
+
+      customStuff: {
+        type: "block",
+        title: "Custom Field",
+        properties: {
+          fieldnameexample: {
+            type: "mycustomtype",
+            title: "My New Custom Type",
+            description: "Enter your esmfiled",
+            required: true,
+            component: Input,
+          },
+        },
       },
     },
+
     buttons: [
       { type: "submit", label: "Sign Up" },
-      { type: "reset", label: "Reset", variant: "destructive" }
-    ]
-  });
+      { type: "reset", label: "Reset", variant: "destructive" },
+    ],
+  }
+  );
 
   const customComponents: CustomComponents = {
     "mycustomtype": ({ fieldConfig, ...props }) => {
