@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { InputHTMLAttributes } from "react";
+import { ControllerRenderProps } from "react-hook-form";
 
-export interface RadioItemProps extends InputHTMLAttributes<HTMLInputElement> { }
+export interface RadioItemProps extends InputHTMLAttributes<HTMLInputElement> {
+    option?: { value: string; label: string };
+    field: ControllerRenderProps<Record<string, unknown>, string>;
+}
 
-export const RadioItem: React.FC<RadioItemProps> = ({ children, ...props }) => {
+export const RadioItem: React.FC<RadioItemProps> = ({ option, field, ...props }) => {
     return (
         <label
             style={{
@@ -23,9 +27,13 @@ export const RadioItem: React.FC<RadioItemProps> = ({ children, ...props }) => {
                     height: "16px",
                     accentColor: "#4f46e5",
                 }}
+                {...field}
                 {...props}
+                value={option?.value}
             />
-            <span style={{ fontSize: "14px", color: "#333" }}>{children}</span>
+            <span style={{ fontSize: "14px", color: "#333" }}>
+                {option?.label}
+            </span>
             <style>{`
         label:hover {
           background-color: #f9f9f9;

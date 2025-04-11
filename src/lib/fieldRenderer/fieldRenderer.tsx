@@ -1,19 +1,16 @@
 import { FormField } from "@/lib/fieldRenderer/formField";
 import { FormItem } from "@/lib/fieldRenderer/formItem";
-import { FormLabel } from "@/lib/fieldRenderer/formLabel";
-import { FormControl } from "@/lib/fieldRenderer/formControl";
-import { FormMessage } from "@/lib/fieldRenderer/formMessage";
 import { Control, ControllerRenderProps } from "react-hook-form";
-import { Select, SelectOption } from "@/lib/elements/select";
+import { Select } from "@/lib/elements/select";
 import { CustomComponents } from "@/lib/interfaces";
 import { Input } from "@/lib/elements";
 import React from "react";
-import RadioGroup from "@/lib/elements/radio/radioGroup";
 import RadioItem from "@/lib/elements/radio/radioItem";
+import RadioGroup from "../elements/radio/radioGroup";
 
 export interface FieldRendererProps {
-    control: Control<Record<string, unknown>>;
     name: string;
+    control: Control
     fieldConfig: {
         type: string;
         title: string;
@@ -34,15 +31,15 @@ export interface FieldRendererProps {
 
 const getComponents = (components?: CustomComponents) => {
     const componentMap = {
+        text: Input,
+        email: Input,
+        password: Input,
+        date: Input,
+        time: Input,
+        url: Input,
         ...components,
-        text: components?.input || Input,
-        email: components?.input || Input,
-        password: components?.password || Input,
-        date: components?.input || Input,
-        time: components?.input || Input,
-        url: components?.input || Input,
         select: components?.select || Select,
-        selectOption: components?.selectOption || SelectOption,
+        // selectOption: components?.selectOption || SelectOption,
         radio: components?.radio || RadioGroup,
         radioItem: components?.radioItem || RadioItem,
     };
@@ -70,7 +67,8 @@ const renderComponent = (
                 <Component
                     type={fieldConfig.type}
                     placeholder={fieldConfig.description}
-                    {...field}
+                    field={field}
+                    fieldConfig={fieldConfig}
                     value={field.value as string}
                     ref={field.ref}
                 />
@@ -79,17 +77,11 @@ const renderComponent = (
             return (
                 <Component
                     placeholder={fieldConfig.description}
-                    {...field}
+                    field={field}
+                    fieldConfig={fieldConfig}
                     value={field.value as string}
                     ref={field.ref}
-                >
-                    {fieldConfig.options?.map((option) => (
-                        <SelectOption key={option.value} value={option.value}>
-                            {option.label}
-                        </SelectOption>
-                    ))}
-                </Component>
-            );
+                />);
         case "radio":
             return (
                 <Component
@@ -97,9 +89,7 @@ const renderComponent = (
                     ref={field.ref}
                 >
                     {fieldConfig.options?.map((option) => (
-                        <RadioItem key={option.value} {...field} value={option.value}>
-                            {option.label}
-                        </RadioItem>
+                        <RadioItem key={option.value} field={field} option={option} />
                     ))}
                 </Component>
             );
@@ -112,6 +102,8 @@ const renderComponent = (
 
 export function FieldRenderer({ control, name, fieldConfig, components }: FieldRendererProps) {
     const componentMap = getComponents(components);
+    const Component = componentMap[fieldConfig.type as keyof typeof componentMap];
+    if (!Component) return;
     return (
         <FormField
             control={control}
@@ -122,10 +114,13 @@ export function FieldRenderer({ control, name, fieldConfig, components }: FieldR
             }}
             render={({ field }: { field: ControllerRenderProps<Record<string, unknown>, string> }) => {
                 return (
+
                     <FormItem>
-                        <FormLabel>{fieldConfig.title}</FormLabel>
-                        <FormControl>{renderComponent(componentMap, field, fieldConfig)}</FormControl>
-                        <FormMessage />
+                        {/* <FormLabel>{fieldConfig.title}</FormLabel> */}
+                        {/* <FormControl>{renderComponent(componentMap, field, fieldConfig)}</FormControl> */}
+                        {renderComponent(componentMap, field, fieldConfig)}
+                        {/* <Component field={field} fieldConfig={fieldConfig} ref={field.ref} /> */}
+                        {/* <FormMessage /> */}
                     </FormItem>
                 )
             }}

@@ -4,6 +4,7 @@ import { FormDefinition, useFormFate } from "formfatecore";
 import { CustomComponents } from "./interfaces";
 import { FieldRenderer, FieldRendererProps } from "./fieldRenderer/fieldRenderer";
 import React from "react";
+import Block from "./elements/block";
 
 export interface FormFateProps {
     formDefinition: FormDefinition;
@@ -12,13 +13,21 @@ export interface FormFateProps {
 }
 
 export function FormFate({ formDefinition, onSubmit, components }: FormFateProps) {
-    const form = useFormFate(formDefinition);
+    const form = useFormFate(formDefinition,);
     const { handleSubmit, control, setValue, watch } = form;
     const formValues = watch();
 
-    const handleReset = () => {
-        Object.keys(formDefinition.properties).forEach((key) => {
-            setValue(key, "");
+
+    // Handle form reset by a recurring function
+    const handleReset = (props) => {
+        Object.entries(props.properties).forEach(([name, field]) => {
+            if (field.type === "block" && field.properties) {
+                handleReset(field);
+            } else {
+                // Set default values for each field in the form
+                console.log("Setting default value for field:", name);
+                setValue(name, field.default || '');
+            }
         });
     };
 
@@ -51,12 +60,9 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
             // Handle "block" type fields
             if (fieldConfig.type === "block" && fieldConfig.properties) {
                 return (
-                    <div key={key} style={{ marginBottom: "1.5rem" }}>
-                        {fieldConfig.title && <h3 className="text-lg font-semibold mb-2">{fieldConfig.title}</h3>}
-                        <div className={fieldConfig.className} style={fieldConfig.style}>
-                            {renderFields(fieldConfig.properties)}
-                        </div>
-                    </div>
+                    <Block fieldConfig={fieldConfig} key={key}>
+                        {renderFields(fieldConfig.properties)}
+                    </Block>
                 );
             }
 
@@ -96,9 +102,10 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                                 button.type === "submit"
                                     ? handleSubmit(submitHandler)
                                     : button.type === "reset"
-                                        ? handleReset
+                                        ? () => handleReset(formDefinition)
                                         : undefined
                             }
+                            disabled={button.disabled}
                         >
                             {button.label}
                         </Button>
