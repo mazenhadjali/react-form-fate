@@ -19,17 +19,17 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
 
 
     // Handle form reset by a recurring function
-    const handleReset = (props) => {
-        Object.entries(props.properties).forEach(([name, field]) => {
+    const handleReset = (fields: Record<string, FormDefinition["properties"]>) => {
+        Object.entries(fields).forEach(([name, field]) => {
             if (field.type === "block" && field.properties) {
-                handleReset(field);
+                handleReset(field.properties);
             } else {
-                // Set default values for each field in the form
                 console.log("Setting default value for field:", name);
                 setValue(name, field.default || '');
             }
         });
     };
+
 
     const defaultOnSubmit = (data: Record<string, unknown>) => {
         console.log("Form Data Submitted:", data);
