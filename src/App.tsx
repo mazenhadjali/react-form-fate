@@ -14,7 +14,7 @@ export default function App() {
             type: "text",
             title: "First Name",
             description: "Enter your first name",
-            className : "test",
+            className: "test",
             required: true,
             default: "ssssaedz",
             validator: (value: string) => {
@@ -130,8 +130,16 @@ export default function App() {
       { type: "submit", label: "Sign Up" },
       { type: "reset", label: "Reset", variant: "destructive" },
     ],
-  }
-  );
+  });
+
+  // const schemaString = JSON.stringify(signupForm, function (key, value) {
+  //   if (typeof value === 'function') {
+  //     return value.toString();
+  //   }
+  //   return value;
+  // });
+
+
 
   const customComponents: CustomComponents = {
     "mycustomtype": ({ fieldConfig, ...props }) => {
@@ -139,11 +147,11 @@ export default function App() {
         <div style={{ marginBottom: "1rem" }}>
           <div>
             <label htmlFor={props.name} style={{ fontSize: "20px", fontWeight: "bold" }}>
-              {fieldConfig.description} 
+              {fieldConfig.description}
             </label>
           </div>
           <label htmlFor={props.name} style={{ fontSize: "20px", fontWeight: "bold" }}>
-            {fieldConfig.title} 
+            {fieldConfig.title}
           </label>
           <input
             type="text"
@@ -151,7 +159,7 @@ export default function App() {
             style={{
               width: "90%",
               padding: "0.5rem",
-              margin:"0 auto",
+              margin: "0 auto",
               display: "block",
               borderRadius: "0.375rem",
               border: "1px solid #ccc",
@@ -171,6 +179,9 @@ export default function App() {
 
   return (
     <React.Fragment>
+      {/* <div>
+        {schemaString}
+      </div> */}
       <div style={{ width: "400px", margin: "50px auto" }}>
         <h1 style={{ textAlign: "center" }}>Sign Up</h1>
         <FormFate

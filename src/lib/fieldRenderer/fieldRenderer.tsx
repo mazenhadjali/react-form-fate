@@ -37,6 +37,7 @@ const getComponents = (components?: CustomComponents) => {
         date: Input,
         time: Input,
         url: Input,
+        number: Input,
         ...components,
         select: components?.select || Select,
         // selectOption: components?.selectOption || SelectOption,
