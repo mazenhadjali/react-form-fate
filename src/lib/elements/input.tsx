@@ -9,12 +9,13 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
         title?: string;
         placeholder?: string;
         description?: string;
+        className?:string;
         [key: string]: unknown;
     };
     field: ControllerRenderProps<Record<string, any>>;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(({ className, field, fieldConfig, style }, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>(({ field, fieldConfig, style }, ref) => {
     const { error } = useFormField();
 
     return (
@@ -52,7 +53,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ className, fiel
                     transition: "border-color 0.2s, box-shadow 0.2s",
                     ...style,
                 }}
-                className={className}
+                className={fieldConfig.className}
             />
 
             {error?.message && (
