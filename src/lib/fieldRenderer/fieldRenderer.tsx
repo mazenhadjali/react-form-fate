@@ -8,17 +8,19 @@ import React from "react";
 import RadioItem from "@/lib/elements/radio/radioItem";
 import RadioGroup from "../elements/radio/radioGroup";
 import { FormDefinition } from "formfatecore";
+import { useRemoteData } from "../remoteData/useRemoteData";
+import { callDataSource } from "../remoteData/utils";
 
 export interface FieldRendererProps {
     name: string;
-    control: Control
+    control: Control;
     formValues: Record<string, unknown>;
     fieldConfig: FormDefinition["properties"];
     components?: CustomComponents;
 }
 
 const getComponents = (components?: CustomComponents) => {
-    const componentMap = {
+    return {
         text: Input,
         email: Input,
         password: Input,
@@ -28,22 +30,27 @@ const getComponents = (components?: CustomComponents) => {
         number: Input,
         ...components,
         select: components?.select || Select,
-        // selectOption: components?.selectOption || SelectOption,
         radio: components?.radio || RadioGroup,
         radioItem: components?.radioItem || RadioItem,
     };
-    // console.log("Component Map:", componentMap);
-    return componentMap;
 };
 
 const renderComponent = (
     componentMap: Record<string, React.ElementType>,
     field: ControllerRenderProps<Record<string, unknown>, string>,
-    fieldConfig: FieldRendererProps['fieldConfig']
+    fieldConfig: FieldRendererProps["fieldConfig"],
+    remoteOptions?: any[] | null
 ) => {
     const Component = componentMap[fieldConfig.type as keyof typeof componentMap];
-
     if (!Component) return null;
+
+    const commonProps = {
+        field,
+        fieldConfig,
+        value: field.value as string,
+        ref: field.ref,
+        placeholder: fieldConfig.description,
+    };
 
     switch (fieldConfig.type) {
         case "text":
@@ -52,51 +59,39 @@ const renderComponent = (
         case "date":
         case "time":
         case "url":
+        case "number":
+            return <Component type={fieldConfig.type} {...commonProps} />;
+
+        case "select": {
+            const options = remoteOptions || fieldConfig.options;
+            return <Component {...commonProps} options={options} />;
+        }
+
+        case "radio": {
+            const options = remoteOptions || fieldConfig.options;
             return (
-                <Component
-                    type={fieldConfig.type}
-                    placeholder={fieldConfig.description}
-                    field={field}
-                    fieldConfig={fieldConfig}
-                    value={field.value as string}
-                    ref={field.ref}
-                />
-            );
-        case "select":
-            return (
-                <Component
-                    placeholder={fieldConfig.description}
-                    field={field}
-                    fieldConfig={fieldConfig}
-                    value={field.value as string}
-                    ref={field.ref}
-                />);
-        case "radio":
-            return (
-                <Component
-                    value={field.value as string}
-                    ref={field.ref}
-                >
-                    {fieldConfig.options?.map((option) => (
+                <Component value={field.value as string} ref={field.ref}>
+                    {options?.map((option: { value: string; label: string }) => (
                         <RadioItem key={option.value} field={field} option={option} />
                     ))}
                 </Component>
             );
-    }
+        }
 
-    return componentMap[fieldConfig.type] ? (
-        <Component field={field} fieldConfig={fieldConfig} ref={field.ref} />
-    ) : null;
+        default:
+            return <Component {...commonProps} />;
+    }
 };
 
-
-
-
-export function FieldRenderer({ control, formValues, name, fieldConfig, components }: FieldRendererProps) {
+export function FieldRenderer({ control, formValues, name, fieldConfig, components, }: FieldRendererProps) {
     const componentMap = getComponents(components);
-    const Component = componentMap[fieldConfig.type as keyof typeof componentMap];
-    if (!Component) return;
 
+    // Only fetch remote options if optionsUrl exists
+    const { data: remoteOptions } = useRemoteData(
+        name,
+        async () => fieldConfig.optionsUrl ? await callDataSource(fieldConfig.optionsUrl) : Promise.resolve(null),
+        []
+    );
 
     return (
         <FormField
@@ -107,22 +102,20 @@ export function FieldRenderer({ control, formValues, name, fieldConfig, componen
                 validate: fieldConfig.validator,
             }}
             render={({ field }: { field: ControllerRenderProps<Record<string, unknown>, string> }) => {
-
                 const resolvedFieldConfig = {
                     ...fieldConfig,
-                    disabled: typeof fieldConfig.disabled === "function" ? fieldConfig.disabled({ formValues }) : fieldConfig.disabled,
-                    // later you can add: readonly, hidden, required, etc.
+                    disabled:
+                        typeof fieldConfig.disabled === "function"
+                            ? fieldConfig.disabled({ formValues })
+                            : fieldConfig.disabled,
                 };
                 field.disabled = resolvedFieldConfig.disabled;
+
                 return (
                     <FormItem>
-                        {/* <FormLabel>{fieldConfig.title}</FormLabel> */}
-                        {/* <FormControl>{renderComponent(componentMap, field, fieldConfig)}</FormControl> */}
-                        {renderComponent(componentMap, field, resolvedFieldConfig)}
-                        {/* <Component field={field} fieldConfig={fieldConfig} ref={field.ref} /> */}
-                        {/* <FormMessage /> */}
+                        {renderComponent(componentMap, field, resolvedFieldConfig, fieldConfig.optionsUrl?.mapper ? fieldConfig.optionsUrl?.mapper({ response: remoteOptions, formValues }) : remoteOptions)}
                     </FormItem>
-                )
+                );
             }}
         />
     );

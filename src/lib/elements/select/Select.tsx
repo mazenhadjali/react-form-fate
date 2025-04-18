@@ -13,7 +13,7 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, style, field, fieldConfig }, ref) => {
+  ({ className, style, field, fieldConfig , options }, ref) => {
     const { error } = useFormField();
 
     return (
@@ -54,7 +54,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <option value="" disabled>
             -- Select an option --
           </option>
-          {fieldConfig?.options?.map((option) => (
+          {options?.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

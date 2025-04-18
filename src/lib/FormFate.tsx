@@ -5,6 +5,7 @@ import { CustomComponents } from "./interfaces";
 import { FieldRenderer } from "./fieldRenderer/fieldRenderer";
 import React from "react";
 import Block from "./elements/block";
+import { RemoteDataProvider } from "./remoteData/remoteDataContext";
 
 export interface FormFateProps {
     formDefinition: FormDefinition;
@@ -85,37 +86,39 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
 
     return (
         <React.Fragment>
-            <FormProvider {...form}>
-                {renderFields(formDefinition.properties)}
+            <RemoteDataProvider>
+                <FormProvider {...form}>
+                    {renderFields(formDefinition.properties)}
 
-                <div style={{ display: "flex", gap: "1rem", paddingTop: "1rem" }}>
-                    {formDefinition?.buttons?.map((button: any, index: any) => (
-                        <Button
-                            key={index}
-                            type={button.type}
-                            variant={button.variant as ButtonProps["variant"]}
-                            style={{
-                                padding: "0.5rem 1rem",
-                                borderRadius: "0.375rem",
-                                fontWeight: "bold",
-                                cursor: "pointer",
-                                transition: "background-color 0.2s",
-                                ...button.style,
-                            }}
-                            onClick={
-                                button.type === "submit"
-                                    ? handleSubmit(submitHandler)
-                                    : button.type === "reset"
-                                        ? () => handleReset(formDefinition)
-                                        : undefined
-                            }
-                            disabled={button.disabled}
-                        >
-                            {button.label}
-                        </Button>
-                    ))}
-                </div>
-            </FormProvider>
+                    <div style={{ display: "flex", gap: "1rem", paddingTop: "1rem" }}>
+                        {formDefinition?.buttons?.map((button: any, index: any) => (
+                            <Button
+                                key={index}
+                                type={button.type}
+                                variant={button.variant as ButtonProps["variant"]}
+                                style={{
+                                    padding: "0.5rem 1rem",
+                                    borderRadius: "0.375rem",
+                                    fontWeight: "bold",
+                                    cursor: "pointer",
+                                    transition: "background-color 0.2s",
+                                    ...button.style,
+                                }}
+                                onClick={
+                                    button.type === "submit"
+                                        ? handleSubmit(submitHandler)
+                                        : button.type === "reset"
+                                            ? () => handleReset(formDefinition)
+                                            : undefined
+                                }
+                                disabled={button.disabled}
+                            >
+                                {button.label}
+                            </Button>
+                        ))}
+                    </div>
+                </FormProvider>
+            </RemoteDataProvider>
         </React.Fragment>
     );
 }

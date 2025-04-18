@@ -44,6 +44,24 @@ export default function App() {
               { value: "other", label: "Other" },
             ],
           },
+          mentor: {
+            type: "select",
+            title: "Mentor",
+            description: "Select your mentor",
+            required: true,
+            default: "",
+            optionsUrl: {
+              url: "https://jsonplaceholder.typicode.com/users",
+              method: "GET",
+              mapper: ({ response, formValues }: { response: unknown; formValues: Record<string, unknown> }) => {
+                const mappedOptions = response?.map((user: { id: number; name: string }) => ({
+                  value: user.id,
+                  label: user.name,
+                }));
+                return mappedOptions;
+              }
+            },
+          },
         },
       },
 
@@ -64,6 +82,7 @@ export default function App() {
               { value: "other", label: "Other" },
             ],
           },
+
           linkedin: {
             type: "text",
             title: "LinkedIn",
