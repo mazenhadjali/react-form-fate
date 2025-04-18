@@ -10,7 +10,7 @@ export default function App() {
         type: "block",
         title: "Personal Information",
         properties: {
-          testname: {
+          firstName: {
             type: "text",
             title: "First Name",
             description: "Enter your first name",
@@ -20,7 +20,7 @@ export default function App() {
             validator: (value: string) => {
               if (value.length < 3) return "First name must be at least 3 characters long";
               return true;
-            }
+            },
           },
           lastName: {
             type: "text",
@@ -28,6 +28,10 @@ export default function App() {
             description: "Enter your last name",
             required: true,
             default: "",
+            disabled: ({ formValues }: { formValues: Record<string, unknown> }) => {
+              const firstName = formValues.firstName as string;
+              return firstName?.length < 3 || firstName === undefined;
+            }
           },
           gender: {
             type: "radio",
@@ -64,7 +68,10 @@ export default function App() {
             type: "text",
             title: "LinkedIn",
             description: "Enter your LinkedIn URL",
-            conditional: { field: "social", equal: "linkedin", state: true },
+            conditional: ({ formValues }: { formValues: Record<string, unknown> }) => {
+              const socialValue = formValues.social as string;
+              return socialValue === "linkedin";
+            },
           },
           github: {
             type: "text",
@@ -132,15 +139,6 @@ export default function App() {
     ],
   });
 
-  // const schemaString = JSON.stringify(signupForm, function (key, value) {
-  //   if (typeof value === 'function') {
-  //     return value.toString();
-  //   }
-  //   return value;
-  // });
-
-
-
   const customComponents: CustomComponents = {
     "mycustomtype": ({ fieldConfig, ...props }) => {
       return (
@@ -179,9 +177,6 @@ export default function App() {
 
   return (
     <React.Fragment>
-      {/* <div>
-        {schemaString}
-      </div> */}
       <div style={{ width: "400px", margin: "50px auto" }}>
         <h1 style={{ textAlign: "center" }}>Sign Up</h1>
         <FormFate

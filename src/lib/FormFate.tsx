@@ -2,7 +2,7 @@ import { Button, ButtonProps } from "@/lib/elements/button";
 import { FormProvider } from "react-hook-form";
 import { FormDefinition, useFormFate } from "formfatecore";
 import { CustomComponents } from "./interfaces";
-import { FieldRenderer, FieldRendererProps } from "./fieldRenderer/fieldRenderer";
+import { FieldRenderer } from "./fieldRenderer/fieldRenderer";
 import React from "react";
 import Block from "./elements/block";
 
@@ -42,19 +42,21 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
             const conditional = fieldConfig.conditional;
 
             // Handle conditional display
-            if (conditional) {
-                const { field, equal, notEqual, state } = conditional;
-                const fieldValue = formValues[field] ?? null;
-                let conditionMet = false;
-
-                if (equal !== undefined) conditionMet = fieldValue === equal;
-                else if (notEqual !== undefined) conditionMet = fieldValue !== notEqual;
-
-                if (fieldValue === undefined && (equal !== undefined || notEqual !== undefined)) {
-                    conditionMet = false;
+            if (fieldConfig.conditional) {
+                let conditionMet = true;
+                if (typeof fieldConfig.conditional === "function") {
+                    conditionMet = conditional({ formValues });
+                } else {
+                    const { field, equal, notEqual, state } = fieldConfig.conditional;
+                    const fieldValue = formValues[field] ?? null;
+                    if (equal !== undefined) conditionMet = fieldValue === equal;
+                    else if (notEqual !== undefined) conditionMet = fieldValue !== notEqual;
+                    if (fieldValue === undefined && (equal !== undefined || notEqual !== undefined)) {
+                        conditionMet = false;
+                    }
+                    if (conditionMet !== state) return null;
                 }
-
-                if (conditionMet !== state) return null;
+                if (!conditionMet) return null;
             }
 
             // Handle "block" type fields
@@ -71,13 +73,15 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                 <FieldRenderer
                     key={key}
                     control={control}
+                    formValues={formValues}
                     name={key}
-                    fieldConfig={fieldConfig as FieldRendererProps["fieldConfig"]}
+                    fieldConfig={fieldConfig}
                     components={components}
                 />
             );
         });
     };
+
 
     return (
         <React.Fragment>

@@ -7,25 +7,13 @@ import { Input } from "@/lib/elements";
 import React from "react";
 import RadioItem from "@/lib/elements/radio/radioItem";
 import RadioGroup from "../elements/radio/radioGroup";
+import { FormDefinition } from "formfatecore";
 
 export interface FieldRendererProps {
     name: string;
     control: Control
-    fieldConfig: {
-        type: string;
-        title: string;
-        description?: string;
-        required?: boolean;
-        validator?: (value: unknown) => string | true;
-        default?: string | boolean | number;
-        options?: { value: string; label: string }[];
-        conditional?: {
-            field: string;
-            equal?: string;
-            notEqual?: string;
-            state: boolean;
-        }
-    };
+    formValues: Record<string, unknown>;
+    fieldConfig: FormDefinition["properties"];
     components?: CustomComponents;
 }
 
@@ -101,10 +89,15 @@ const renderComponent = (
     ) : null;
 };
 
-export function FieldRenderer({ control, name, fieldConfig, components }: FieldRendererProps) {
+
+
+
+export function FieldRenderer({ control, formValues, name, fieldConfig, components }: FieldRendererProps) {
     const componentMap = getComponents(components);
     const Component = componentMap[fieldConfig.type as keyof typeof componentMap];
     if (!Component) return;
+
+
     return (
         <FormField
             control={control}
@@ -114,12 +107,18 @@ export function FieldRenderer({ control, name, fieldConfig, components }: FieldR
                 validate: fieldConfig.validator,
             }}
             render={({ field }: { field: ControllerRenderProps<Record<string, unknown>, string> }) => {
-                return (
 
+                const resolvedFieldConfig = {
+                    ...fieldConfig,
+                    disabled: typeof fieldConfig.disabled === "function" ? fieldConfig.disabled({ formValues }) : fieldConfig.disabled,
+                    // later you can add: readonly, hidden, required, etc.
+                };
+                field.disabled = resolvedFieldConfig.disabled;
+                return (
                     <FormItem>
                         {/* <FormLabel>{fieldConfig.title}</FormLabel> */}
                         {/* <FormControl>{renderComponent(componentMap, field, fieldConfig)}</FormControl> */}
-                        {renderComponent(componentMap, field, fieldConfig)}
+                        {renderComponent(componentMap, field, resolvedFieldConfig)}
                         {/* <Component field={field} fieldConfig={fieldConfig} ref={field.ref} /> */}
                         {/* <FormMessage /> */}
                     </FormItem>
