@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, ButtonProps } from "@/lib/elements/button";
 import { FormProvider } from "react-hook-form";
 import { FormDefinition, useFormFate } from "formfatecore";

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormField } from "@/lib/fieldRenderer/formField";
 import { FormItem } from "@/lib/fieldRenderer/formItem";
 import { Control, ControllerRenderProps } from "react-hook-form";

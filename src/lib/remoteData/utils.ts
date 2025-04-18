@@ -1,5 +1,5 @@
-export const callDataSource = async (options) => {
-    const { url, method = "GET", headers = {}, params, body, mapper } = options;
+export const callDataSource = async (options: { url: string; method?: string; headers?: Record<string, string>; params?: Record<string, unknown>; body?: unknown }) => {
+    const { url, method = "GET", headers = {}, params, body } = options;
 
     try {
         // build URL with query params if provided
@@ -28,8 +28,6 @@ export const callDataSource = async (options) => {
 
         const responseData = await response.json();
 
-        // console.log("00000000000000000000000:", mapper ? mapper({ responseData }) : responseData);
-        // apply mapper if provided
         return responseData;
     } catch (error) {
         console.error("Error fetching data:", error);

@@ -54,6 +54,8 @@ export default function App() {
               url: "https://jsonplaceholder.typicode.com/users",
               method: "GET",
               mapper: ({ response, formValues }: { response: unknown; formValues: Record<string, unknown> }) => {
+                console.log("response", response);
+                console.log("formValues", formValues);
                 const mappedOptions = response?.map((user: { id: number; name: string }) => ({
                   value: user.id,
                   label: user.name,
