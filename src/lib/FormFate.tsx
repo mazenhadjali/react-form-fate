@@ -107,7 +107,12 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                                 }}
                                 onClick={
                                     button.type === "submit"
-                                        ? handleSubmit(submitHandler)
+                                        ? () => {
+                                            console.log("Submitting form with data:" , formValues);
+                                            handleSubmit((data) => {
+                                                submitHandler(data);
+                                            })();
+                                        }
                                         : button.type === "reset"
                                             ? () => handleReset(formDefinition)
                                             : undefined

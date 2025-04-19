@@ -47,7 +47,10 @@ const renderComponent = (
 
     const commonProps = {
         field,
-        fieldConfig,
+        fieldConfig: {
+            ...fieldConfig,
+            options: remoteOptions || fieldConfig.options,
+        },
         value: field.value as string,
         ref: field.ref,
         placeholder: fieldConfig.description,
@@ -64,18 +67,12 @@ const renderComponent = (
             return <Component type={fieldConfig.type} {...commonProps} />;
 
         case "select": {
-            const options = remoteOptions || fieldConfig.options;
-            return <Component {...commonProps} options={options} />;
+            return <Component {...commonProps} />;
         }
 
         case "radio": {
-            const options = remoteOptions || fieldConfig.options;
             return (
-                <Component value={field.value as string} ref={field.ref}>
-                    {options?.map((option: { value: string; label: string }) => (
-                        <RadioItem key={option.value} field={field} option={option} />
-                    ))}
-                </Component>
+                <Component {...commonProps} />
             );
         }
 
@@ -88,11 +85,7 @@ export function FieldRenderer({ control, formValues, name, fieldConfig, componen
     const componentMap = getComponents(components);
 
     // Only fetch remote options if optionsUrl exists
-    const { data: remoteOptions } = useRemoteData(
-        name,
-        async () => fieldConfig.optionsUrl ? await callDataSource(fieldConfig.optionsUrl) : Promise.resolve(null),
-        []
-    );
+    const { data: remoteOptions } = useRemoteData(name, async () => fieldConfig.optionsUrl ? await callDataSource(fieldConfig.optionsUrl) : Promise.resolve(null), []);
 
     return (
         <FormField

@@ -54,8 +54,6 @@ export default function App() {
               url: "https://jsonplaceholder.typicode.com/users",
               method: "GET",
               mapper: ({ response, formValues }: { response: unknown; formValues: Record<string, unknown> }) => {
-                console.log("response", response);
-                console.log("formValues", formValues);
                 const mappedOptions = response?.map((user: { id: number; name: string }) => ({
                   value: user.id,
                   label: user.name,
@@ -84,7 +82,6 @@ export default function App() {
               { value: "other", label: "Other" },
             ],
           },
-
           linkedin: {
             type: "text",
             title: "LinkedIn",
@@ -131,9 +128,7 @@ export default function App() {
             description: "Confirm your password",
             required: true,
             validator: (value: string, formValues: Record<string, unknown>) => {
-              console.log("password", formValues.password);
               if (value !== formValues.password) return "Passwords do not match";
-
               return true;
             }
           },
@@ -198,7 +193,7 @@ export default function App() {
 
   return (
     <React.Fragment>
-      <div style={{ width: "400px", margin: "50px auto" }}>
+      <div style={{ width: "600px", margin: "50px auto" }}>
         <h1 style={{ textAlign: "center" }}>Sign Up</h1>
         <FormFate
           formDefinition={signupForm}
