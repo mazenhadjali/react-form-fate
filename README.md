@@ -28,84 +28,140 @@ A form schema is a JSON object that defines the structure, fields, behavior, and
 const signupForm = {
   name: "signupForm",
   properties: {
-    firstName: {
-      type: "text",
-      title: "First Name",
-      description: "Enter your first name",
-      required: true,
-      default: "",
+    personalInfo: {
+      type: "block",
+      title: "Personal Information",
+      properties: {
+        firstName: {
+          type: "text",
+          title: "First Name",
+          description: "Enter your first name",
+          required: true,
+          default: "",
+          validator: (value: string) => {
+            if (value.length < 3) return "First name must be at least 3 characters long";
+            return true;
+          },
+        },
+        lastName: {
+          type: "text",
+          title: "Last Name",
+          description: "Enter your last name",
+          required: true,
+          default: "",
+          disabled: ({ formValues }: { formValues: Record<string, unknown> }) => {
+            const firstName = formValues.firstName as string;
+            return firstName?.length < 3 || firstName === undefined;
+          },
+        },
+        gender: {
+          type: "radio",
+          title: "Gender",
+          description: "Select your gender",
+          required: true,
+          options: [
+            { value: "male", label: "Male" },
+            { value: "female", label: "Female" },
+            { value: "other", label: "Other" },
+          ],
+        },
+        mentor: {
+          type: "select",
+          title: "Mentor",
+          description: "Select your mentor",
+          required: true,
+          default: "",
+          optionsUrl: {
+            url: "https://jsonplaceholder.typicode.com/users",
+            method: "GET",
+            mapper: ({ response }: { response: any }) => {
+              return response.map((user: { id: number; name: string }) => ({
+                value: user.id,
+                label: user.name,
+              }));
+            },
+          },
+        },
+      },
     },
-    lastName: {
-      type: "text",
-      title: "Last Name",
-      description: "Enter your last name",
-      required: true,
-      default: "",
+    socialLinks: {
+      type: "block",
+      title: "Social Media Info",
+      properties: {
+        social: {
+          type: "select",
+          title: "Social",
+          description: "Select your social media",
+          required: true,
+          default: "",
+          options: [
+            { value: "linkedin", label: "LinkedIn" },
+            { value: "github", label: "GitHub" },
+            { value: "google", label: "Google" },
+            { value: "other", label: "Other" },
+          ],
+        },
+        linkedin: {
+          type: "text",
+          title: "LinkedIn",
+          description: "Enter your LinkedIn URL",
+          conditional: ({ formValues }: { formValues: Record<string, unknown> }) => {
+            return formValues.social === "linkedin";
+          },
+        },
+        github: {
+          type: "text",
+          title: "GitHub",
+          description: "Enter your GitHub URL",
+          conditional: { field: "social", equal: "github", state: true },
+        },
+        google: {
+          type: "text",
+          title: "Google",
+          description: "Enter your Google URL",
+          conditional: { field: "social", equal: "google", state: true },
+        },
+      },
     },
-    gender: {
-      type: "radio",
-      title: "Gender",
-      description: "Select your gender",
-      required: true,
-      options: [
-        { value: 'male', label: 'Male' },
-        { value: 'female', label: 'Female' },
-        { value: 'other', label: 'Other' },
-      ],
+    accountInfo: {
+      type: "block",
+      title: "Account Credentials",
+      properties: {
+        email: {
+          type: "email",
+          title: "Email",
+          description: "Enter your email address",
+          required: true,
+        },
+        password: {
+          type: "password",
+          title: "Password",
+          description: "Enter your password",
+          required: true,
+        },
+        confirmPassword: {
+          type: "password",
+          title: "Confirm Password",
+          description: "Confirm your password",
+          required: true,
+          validator: (value: string, formValues: Record<string, unknown>) => {
+            if (value !== formValues.password) return "Passwords do not match";
+            return true;
+          },
+        },
+      },
     },
-    social: {
-      type: 'select',
-      title: 'Social Media',
-      description: 'Select your preferred social media platform',
-      required: true,
-      default: '',
-      options: [
-        { value: '', label: '' },
-        { value: 'linkedin', label: 'LinkedIn' },
-        { value: 'github', label: 'GitHub' },
-        { value: 'google', label: 'Google' },
-        { value: 'other', label: 'Other' },
-      ],
-    },
-    linkedin: {
-      type: 'text',
-      title: 'LinkedIn URL',
-      description: 'Enter your LinkedIn URL',
-      conditional: { field: 'social', equal: 'linkedin', state: true },
-    },
-    github: {
-      type: 'text',
-      title: 'GitHub URL',
-      description: 'Enter your GitHub URL',
-      conditional: { field: 'social', equal: 'github', state: true },
-    },
-    google: {
-      type: 'text',
-      title: 'Google URL',
-      description: 'Enter your Google URL',
-      conditional: { field: 'social', equal: 'google', state: true },
-    },
-    email: {
-      type: "email",
-      title: "Email Address",
-      description: "Enter your email address",
-    },
-    password: {
-      type: "password",
-      title: "Password",
-      description: "Enter your password",
-    },
-    confirmPassword: {
-      type: "password",
-      title: "Confirm Password",
-      description: "Re-enter your password",
-    },
-    fieldnameexample: {
-      type: "mycustomtype",
+    customStuff: {
+      type: "block",
       title: "Custom Field",
-      description: "Enter your custom value",
-      required: true,
-      component: Input,
+      properties: {
+        fieldnameexample: {
+          type: "mycustomtype",
+          title: "My New Custom Type",
+          description: "Enter your custom value",
+          required: true,
+        },
+      },
     },
   },
   buttons: [
@@ -113,6 +169,36 @@ const signupForm = {
     { type: "reset", label: "Reset", variant: "destructive" },
   ],
 };
+```
+
+### Data Source for Select and Radio Fields
+
+The `optionsUrl` property allows you to dynamically fetch options for `select` or `radio` fields from a remote data source. This is particularly useful when the options depend on external APIs or dynamic data. Here's how it works:
+
+- **url**: The endpoint to fetch data from.
+- **method**: The HTTP method to use (e.g., `GET`, `POST`).
+- **mapper**: A function to transform the fetched data into the required format for the field options.
+
+Example:
+
+```tsx
+mentor: {
+  type: "select",
+  title: "Mentor",
+  description: "Select your mentor",
+  required: true,
+  default: "",
+  optionsUrl: {
+    url: "https://jsonplaceholder.typicode.com/users",
+    method: "GET",
+    mapper: ({ response }: { response: any }) => {
+      return response.map((user: { id: number; name: string }) => ({
+        value: user.id,
+        label: user.name,
+      }));
+    },
+  },
+},
 ```
 
 ### Custom Components
@@ -156,7 +242,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ width: "400px", margin: "50px auto" }}>
+    <div style={{ width: "600px", margin: "50px auto" }}>
       <h1 style={{ textAlign: "center" }}>Sign Up</h1>
       <FormFate
         formDefinition={signupForm}
@@ -172,28 +258,26 @@ export default function App() {
 
 Fields can be conditionally rendered based on other field values using the `conditional` property:
 
-```json
-"linkedin": {
-  "type": "text",
-  "title": "LinkedIn URL",
-  "description": "Enter your LinkedIn URL",
-  "conditional": {
-    "field": "social",
-    "equal": "linkedin",
-    "state": true
-  }
-}
+```tsx
+linkedin: {
+  type: "text",
+  title: "LinkedIn URL",
+  description: "Enter your LinkedIn URL",
+  conditional: ({ formValues }: { formValues: Record<string, unknown> }) => {
+    return formValues.social === "linkedin";
+  },
+},
 ```
 
 ### Buttons
 
 The `buttons` array in the schema defines the available form buttons, with support for types like `submit`, `reset`, and more:
 
-```json
-"buttons": [
-  { "type": "submit", "label": "Sign Up" },
-  { "type": "reset", "label": "Reset", "variant": "destructive" }
-]
+```tsx
+buttons: [
+  { type: "submit", label: "Sign Up" },
+  { type: "reset", label: "Reset", variant: "destructive" },
+],
 ```
 
 ## Customization
