@@ -40,17 +40,13 @@ const renderComponent = (
     componentMap: Record<string, React.ElementType>,
     field: ControllerRenderProps<Record<string, unknown>, string>,
     fieldConfig: FieldRendererProps["fieldConfig"],
-    remoteOptions?: any[] | null
 ) => {
     const Component = componentMap[fieldConfig.type as keyof typeof componentMap];
     if (!Component) return null;
 
     const commonProps = {
         field,
-        fieldConfig: {
-            ...fieldConfig,
-            options: remoteOptions || fieldConfig.options,
-        },
+        fieldConfig,
         value: field.value as string,
         ref: field.ref,
         placeholder: fieldConfig.description,
@@ -96,18 +92,21 @@ export function FieldRenderer({ control, formValues, name, fieldConfig, componen
                 validate: fieldConfig.validator,
             }}
             render={({ field }: { field: ControllerRenderProps<Record<string, unknown>, string> }) => {
+                const options = fieldConfig.optionsUrl?.mapper ? fieldConfig.optionsUrl?.mapper({ response: remoteOptions, formValues }) : remoteOptions;
                 const resolvedFieldConfig = {
                     ...fieldConfig,
                     disabled:
                         typeof fieldConfig.disabled === "function"
                             ? fieldConfig.disabled({ formValues })
                             : fieldConfig.disabled,
+                    // options,
+                    options: fieldConfig.filterFunction ? fieldConfig.filterFunction({ options, formValues }) : options,
                 };
                 field.disabled = resolvedFieldConfig.disabled;
 
                 return (
                     <FormItem>
-                        {renderComponent(componentMap, field, resolvedFieldConfig, fieldConfig.optionsUrl?.mapper ? fieldConfig.optionsUrl?.mapper({ response: remoteOptions, formValues }) : remoteOptions)}
+                        {renderComponent(componentMap, field, resolvedFieldConfig)}
                     </FormItem>
                 );
             }}

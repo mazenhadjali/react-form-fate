@@ -16,7 +16,7 @@ export default function App() {
             description: "Enter your first name",
             className: "test",
             required: true,
-            default: "ssssaedz",
+            default: "a",
             validator: (value: string) => {
               if (value.length < 3) return "First name must be at least 3 characters long";
               return true;
@@ -59,7 +59,14 @@ export default function App() {
                   label: user.name,
                 }));
                 return mappedOptions;
-              }
+              },
+
+            },
+            filterFunction: ({ options, formValues }: { options: Array<{ value: string; label: string }>; formValues: Record<string, unknown> }) => {
+              const firstName = formValues.firstName as string;
+              return options?.filter((option) => {
+                return option?.label?.indexOf(firstName) !== -1
+              });
             },
           },
         },
@@ -81,6 +88,7 @@ export default function App() {
               { value: "google", label: "Google" },
               { value: "other", label: "Other" },
             ],
+
           },
           linkedin: {
             type: "text",

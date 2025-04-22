@@ -10,13 +10,13 @@ import {
 import { FormFieldContext } from "./context"
 import { FormItemContext } from "./formItem"
 
-export const FormField = <TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>({ ...props }: ControllerProps<TFieldValues, TName>) => {
+export const FormField = <TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>({ name, ...controllerProps }: ControllerProps<TFieldValues, TName>) => {
     return (
-        <FormFieldContext.Provider value={{ name: props.name }}>
-            <Controller {...props} />
+        <FormFieldContext.Provider value={{ name }}>
+            <Controller name={name} {...controllerProps} />
         </FormFieldContext.Provider>
-    )
-}
+    );
+};
 
 export const useFormField = () => {
     const fieldContext = React.useContext(FormFieldContext)
