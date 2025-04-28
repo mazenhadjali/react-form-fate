@@ -83,37 +83,36 @@ export function FieldRenderer({ control, formValues, name, fieldConfig, componen
     // Only fetch remote options if optionsUrl exists
     const { data: remoteOptions } = useRemoteData(name, async () => fieldConfig.optionsUrl ? await callDataSource(fieldConfig.optionsUrl) : Promise.resolve(fieldConfig.options || []));
 
-        return(
-        <FormField
-            control = { control }
-            name = { name }
-            rules = {{
-                required: fieldConfig.required ? `${fieldConfig.title} is required` : undefined,
-        validate: fieldConfig.validator,
-        onChange: (value: string) => {
-            return value;
-        },
-    }}
-render = {({ field }: { field: ControllerRenderProps<Record<string, unknown>, string> }) => {
-    const options = fieldConfig.optionsUrl?.mapper ? fieldConfig.optionsUrl?.mapper({ response: remoteOptions, formValues }) : remoteOptions;
-    const resolvedFieldConfig = {
-        ...fieldConfig,
-        disabled:
-            typeof fieldConfig.disabled === "function"
-                ? fieldConfig.disabled({ formValues })
-                : fieldConfig.disabled,
-        // options,
-        options: fieldConfig.filterFunction ? fieldConfig.filterFunction({ options, formValues }) : options,
-    };
-    field.disabled = resolvedFieldConfig.disabled;
-    field.value = fieldConfig.valueCallback ? fieldConfig.valueCallback({ formValues, value: field.value }) : field.value;
-
     return (
-        <FormItem>
-            {renderComponent(componentMap, field, resolvedFieldConfig)}
-        </FormItem>
-    );
-}}
+        <FormField
+            control={control}
+            name={name}
+            rules={{
+                required: fieldConfig.required ? `${fieldConfig.title} is required` : undefined,
+                validate: fieldConfig.validator,
+                onChange: (value: string) => {
+                    return value;
+                },
+            }}
+            render={({ field }: { field: ControllerRenderProps }) => {
+                const options = fieldConfig.optionsUrl?.mapper ? fieldConfig.optionsUrl?.mapper({ response: remoteOptions, formValues }) : remoteOptions;
+                const resolvedFieldConfig = {
+                    ...fieldConfig,
+                    disabled:
+                        typeof fieldConfig.disabled === "function"
+                            ? fieldConfig.disabled({ formValues })
+                            : fieldConfig.disabled,
+                    // options,
+                    options: fieldConfig.filterFunction ? fieldConfig.filterFunction({ options, formValues }) : options,
+                };
+                field.disabled = resolvedFieldConfig.disabled;
+                field.value = fieldConfig.valueCallback ? fieldConfig.valueCallback({ formValues, value: field.value }) : field.value;
+                return (
+                    <FormItem>
+                        {renderComponent(componentMap, field, resolvedFieldConfig)}
+                    </FormItem>
+                );
+            }}
         />
     );
 }

@@ -4,7 +4,7 @@ import { ControllerRenderProps } from "react-hook-form";
 
 export interface RadioItemProps extends InputHTMLAttributes<HTMLInputElement> {
     option?: { value: string; label: string };
-    field: ControllerRenderProps<Record<string, unknown>, string>;
+    field: ControllerRenderProps
 }
 
 export const RadioItem: React.FC<RadioItemProps> = ({ option, field, ...props }) => {

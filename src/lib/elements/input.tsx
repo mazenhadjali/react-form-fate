@@ -11,7 +11,7 @@ export interface InputProps {
         className?: string;
         [key: string]: unknown;
     };
-    field: ControllerRenderProps<Record<string, any>>;
+    field: ControllerRenderProps
 }
 
 export const Input: React.FC<InputProps> = ({ field, fieldConfig }) => {
