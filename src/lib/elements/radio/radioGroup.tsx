@@ -1,32 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { useFormField } from "@/lib/fieldRenderer/formField";
-import React, { HTMLAttributes } from "react";
+import React from "react";
 
-export interface RadioGroupProps extends HTMLAttributes<HTMLDivElement> {
+export interface RadioGroupProps {
     fieldConfig?: {
         title?: string;
         description?: string;
         options?: { value: string; label: string }[];
+        className?: string;
         [key: string]: unknown;
     };
     field?: any; // usually you get this from RHF's `Controller`
 }
 
-export const RadioGroup: React.FC<RadioGroupProps> = ({
-    className,
-    style,
-    field,
-    fieldConfig,
-    ...props
-}) => {
+export const RadioGroup: React.FC<RadioGroupProps> = ({ field, fieldConfig }) => {
     const { error } = useFormField();
 
     return (
-        <div
-            style={{ marginBottom: "1rem", width: "100%", ...style }}
-            className={className}
-            {...props}
-        >
+        <div className={fieldConfig?.className} style={{ marginBottom: "1rem" }}>
             {fieldConfig?.title && (
                 <label
                     style={{
@@ -41,17 +32,17 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                 </label>
             )}
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div>
                 {fieldConfig?.options?.map((option) => (
                     <label
                         key={option.value}
                         style={{
                             display: "flex",
-                            alignItems: "center",
                             gap: "8px",
                             fontSize: "14px",
                             color: "#333",
-                            cursor: "pointer",
+                            marginBottom: "0.5rem",
+
                         }}
                     >
                         <input
@@ -61,10 +52,6 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                             checked={field.value === option.value}
                             onChange={() => field.onChange(option.value)}
                             name={field?.name}
-                            style={{
-                                cursor: "pointer",
-                            }}
-
                         />
                         {option.label}
                     </label>

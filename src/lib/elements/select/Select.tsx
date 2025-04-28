@@ -7,16 +7,17 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
     title?: string;
     description?: string;
     options?: { value: string; label: string }[];
+    className?: string;
     [key: string]: unknown;
   };
   field?: any; // usually you get this from RHF's `Controller`
 }
 
-export const Select: React.FC<SelectProps> = ({ className, style, field, fieldConfig }) => {
+export const Select: React.FC<SelectProps> = ({ field, fieldConfig }) => {
   const { error } = useFormField();
 
   return (
-    <div style={{ marginBottom: "1rem", width: "100%" }}>
+    <div className={fieldConfig?.className} style={{ marginBottom: "1rem" }}>
       {fieldConfig?.title && (
         <label
           htmlFor={field?.name}
@@ -44,10 +45,7 @@ export const Select: React.FC<SelectProps> = ({ className, style, field, fieldCo
           backgroundColor: "white",
           cursor: "pointer",
           boxShadow: error ? "0 0 0 2px rgba(231, 76, 60, 0.3)" : "none",
-          transition: "border-color 0.2s, box-shadow 0.2s",
-          ...style,
         }}
-        className={className}
       >
         <option value="" disabled>
           -- Select an option --

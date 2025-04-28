@@ -1,31 +1,29 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import { forwardRef, InputHTMLAttributes } from "react";
 import { useFormField } from "../fieldRenderer/formField";
 import { ControllerRenderProps } from "react-hook-form";
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps {
     fieldConfig: {
         type: string;
         title?: string;
         placeholder?: string;
         description?: string;
-        className?:string;
+        className?: string;
         [key: string]: unknown;
     };
     field: ControllerRenderProps<Record<string, any>>;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(({ field, fieldConfig, style }, ref) => {
+export const Input: React.FC<InputProps> = ({ field, fieldConfig }) => {
     const { error } = useFormField();
 
     return (
-        <div style={{ marginBottom: "1rem", width: "100%" }}>
+        <div className={fieldConfig.className}>
             {fieldConfig.title && (
                 <label
                     htmlFor={field.name}
                     style={{
-                        display: "block",
-                        marginBottom: "0.4rem",
+                        paddingBottom: "0.4rem",
                         fontWeight: 500,
                         fontSize: "14px",
                         color: "#333",
@@ -34,24 +32,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ field, fieldCon
                     {fieldConfig.title}
                 </label>
             )}
+            <br />
 
             <input
                 {...field}
                 type={fieldConfig.type}
                 placeholder={fieldConfig.placeholder}
                 style={{
-                    // 100% width of parent container and centered
-                    width: "90%",
-                    margin: "0 auto",
-                    display: "block",
-                    padding: "0.5rem 0.75rem",
+                    width: "100%",
+                    padding: "0.4rem 0.6rem",
                     border: `1px solid ${error ? "#e74c3c" : "#ccc"}`,
                     borderRadius: "8px",
                     fontSize: "15px",
-                    outline: "none",
                     boxShadow: error ? "0 0 0 2px rgba(231, 76, 60, 0.3)" : "none",
-                    transition: "border-color 0.2s, box-shadow 0.2s",
-                    ...style,
+                    boxSizing: "border-box",
                 }}
                 className={fieldConfig.className}
             />
@@ -71,6 +65,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ field, fieldCon
         </div>
     );
 }
-);
+
 
 export default Input;

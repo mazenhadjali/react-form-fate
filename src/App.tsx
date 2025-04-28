@@ -31,7 +31,11 @@ export default function App() {
             disabled: ({ formValues }: { formValues: Record<string, unknown> }) => {
               const firstName = formValues.firstName as string;
               return firstName?.length < 3 || firstName === undefined;
-            }
+            },
+            valueCallback: ({ formValues , value }: { formValues: Record<string, unknown>; value: string }) => {
+              const firstName = formValues.firstName as string;
+              return firstName?.length < 3 || firstName === undefined ? "" : value;
+            },
           },
           gender: {
             type: "radio",
@@ -201,14 +205,12 @@ export default function App() {
 
   return (
     <React.Fragment>
-      <div style={{ width: "600px", margin: "50px auto" }}>
         <h1 style={{ textAlign: "center" }}>Sign Up</h1>
         <FormFate
           formDefinition={signupForm}
           onSubmit={onSubmit}
           components={customComponents}
         />
-      </div>
 
     </React.Fragment>
   );
