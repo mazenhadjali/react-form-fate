@@ -1,6 +1,6 @@
 {
   "name": "react-form-fate",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -37,7 +37,7 @@
   ],
   "dependencies": {
     "axios": "^1.8.4",
-    "formfatecore": "^0.12.1",
+    "formfatecore": "^0.12.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.55.0",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.6",
-    "@eslint/js": "^9.21.0",
+    "@eslint/js": "^9.25.1",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-onboarding": "^8.6.12",
     "@storybook/blocks": "^8.6.12",

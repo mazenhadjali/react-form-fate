@@ -50,8 +50,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({ field, fieldConfig }) =>
                             type="radio"
                             {...field}
                             value={option.value}
-                            checked={field.value === option.value}
-                            onChange={() => field.onChange(option.value)}
+                            checked={field?.value === option.value}
+                            onChange={() => field?.onChange(option.value)}
                             name={field?.name}
                         />
                         {option.label}
