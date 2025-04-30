@@ -32,7 +32,7 @@ export default function App() {
               const firstName = formValues.firstName as string;
               return firstName?.length < 3 || firstName === undefined;
             },
-            valueCallback: ({ formValues , value }: { formValues: Record<string, unknown>; value: string }) => {
+            valueCallback: ({ formValues, value }: { formValues: Record<string, unknown>; value: string }) => {
               const firstName = formValues.firstName as string;
               return firstName?.length < 3 || firstName === undefined ? "" : value;
             },
@@ -152,7 +152,7 @@ export default function App() {
         title: "Custom Field",
         properties: {
           fieldnameexample: {
-            type: "mycustomtype",
+            type: "textarea",
             title: "My New Custom Type",
             description: "Enter your esmfiled",
             required: true,
@@ -205,12 +205,12 @@ export default function App() {
 
   return (
     <React.Fragment>
-        <h1 style={{ textAlign: "center" }}>Sign Up</h1>
-        <FormFate
-          formDefinition={signupForm}
-          onSubmit={onSubmit}
-          components={customComponents}
-        />
+      <h1 style={{ textAlign: "center" }}>Sign Up</h1>
+      <FormFate
+        formDefinition={signupForm}
+        onSubmit={onSubmit}
+        components={customComponents}
+      />
 
     </React.Fragment>
   );

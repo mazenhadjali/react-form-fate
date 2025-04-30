@@ -4,7 +4,7 @@ import { FormItem } from "@/lib/fieldRenderer/formItem";
 import { Control, ControllerRenderProps } from "react-hook-form";
 import { Select } from "@/lib/elements/select";
 import { CustomComponents } from "@/lib/interfaces";
-import { Input } from "@/lib/elements";
+import { Input, Textarea } from "@/lib/elements";
 import React from "react";
 import RadioItem from "@/lib/elements/radio/radioItem";
 import RadioGroup from "../elements/radio/radioGroup";
@@ -29,10 +29,11 @@ const getComponents = (components?: CustomComponents) => {
         time: Input,
         url: Input,
         number: Input,
-        ...components,
         select: components?.select || Select,
         radio: components?.radio || RadioGroup,
         radioItem: components?.radioItem || RadioItem,
+        textarea: components?.textarea || Textarea,
+        ...components,
     };
 };
 
@@ -70,6 +71,10 @@ const renderComponent = (
             return (
                 <Component {...commonProps} />
             );
+        }
+
+        case "textarea": {
+            return <Component {...commonProps} />;
         }
 
         default:

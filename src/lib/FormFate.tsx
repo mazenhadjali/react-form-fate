@@ -16,22 +16,8 @@ export interface FormFateProps {
 
 export function FormFate({ formDefinition, onSubmit, components }: FormFateProps) {
     const form = useFormFate(formDefinition,);
-    const { handleSubmit, control, setValue, watch } = form;
+    const { handleSubmit, control, watch, reset } = form;
     const formValues = watch();
-
-
-    // Handle form reset by a recurring function
-    const handleReset = (fields: Record<string, FormDefinition["properties"]>) => {
-        Object.entries(fields).forEach(([name, field]) => {
-            if (field.type === "block" && field.properties) {
-                handleReset(field.properties);
-            } else {
-                console.log("Setting default value for field:", name);
-                setValue(name, field.default || '');
-            }
-        });
-    };
-
 
     const defaultOnSubmit = (data: Record<string, unknown>) => {
         console.log("Form Data Submitted:", data);
@@ -114,7 +100,7 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
                                             })();
                                         }
                                         : button.type === "reset"
-                                            ? () => handleReset(formDefinition)
+                                            ? () => { console.log("extractDefaults", extractDefaults(formDefinition)); reset(extractDefaults(formDefinition)) }
                                             : undefined
                                 }
                                 disabled={button.disabled}
@@ -128,3 +114,27 @@ export function FormFate({ formDefinition, onSubmit, components }: FormFateProps
         </React.Fragment>
     );
 }
+
+
+export const extractDefaults = (schema: Record<string, any>): Record<string, unknown> => {
+    const result: Record<string, unknown> = {};
+
+    const walk = (properties: Record<string, any>) => {
+        for (const key in properties) {
+            const prop = properties[key];
+
+            if (prop.type === 'block' && prop.properties) {
+                walk(prop.properties); // Continue recursion without nesting under `key`
+            }
+
+            result[key] = 'default' in prop ? prop.default : ['select', 'radio'].includes(prop.type) ? prop.options?.[0]?.value ?? '' : '';
+
+        }
+    };
+
+    if (schema.properties) {
+        walk(schema.properties);
+    }
+
+    return result;
+};

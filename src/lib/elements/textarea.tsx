@@ -1,36 +1,79 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import * as React from "react";
+import React from "react";
+import { useFormField } from "../fieldRenderer/formField";
+import { ControllerRenderProps } from "react-hook-form";
 
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> { }
+export interface TextareaProps {
+  fieldConfig: {
+    title?: string;
+    placeholder?: string;
+    description?: string;
+    className?: string;
+    [key: string]: unknown;
+  };
+  field: ControllerRenderProps;
+}
 
-export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ style, disabled, ...props }, ref) => {
-    const defaultStyle: React.CSSProperties = {
-      display: "flex",
-      minHeight: "60px",
-      width: "100%",
-      borderRadius: "0.375rem",
-      border: "1px solid #d1d5db",
-      backgroundColor: "transparent",
-      padding: "0.5rem 0.75rem",
-      fontSize: "1rem",
-      boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
-      outline: "none",
-      cursor: disabled ? "not-allowed" : "auto",
-      opacity: disabled ? 0.5 : 1,
-    };
+export const Textarea: React.FC<TextareaProps> = ({ field, fieldConfig }) => {
+  const { error } = useFormField();
 
-    return (
+  return (
+    <div className={fieldConfig.className}>
+      {fieldConfig.title && (
+        <label
+          htmlFor={field.name}
+          style={{
+            paddingBottom: "0.4rem",
+            fontWeight: 500,
+            fontSize: "14px",
+            color: "#333",
+          }}
+        >
+          {fieldConfig.title}
+        </label>
+      )}
+      <br />
+
       <textarea
-        ref={ref}
-        disabled={disabled}
-        style={{ ...defaultStyle, ...style }}
-        {...props}
+        {...field}
+        id={field.name}
+        placeholder={fieldConfig.placeholder}
+        style={{
+          display: "flex",
+          minHeight: "60px",
+          width: "100%",
+          borderRadius: "8px",
+          border: `1px solid ${error ? "#e74c3c" : "#ccc"}`,
+          backgroundColor: "transparent",
+          padding: "0.5rem 0.75rem",
+          fontSize: "1rem",
+          boxShadow: error ? "0 0 0 2px rgba(231, 76, 60, 0.3)" : "none",
+          outline: "none",
+          resize: "vertical",
+        }}
+        className={fieldConfig.className}
       />
-    );
-  }
-);
 
-Textarea.displayName = "Textarea";
+      {fieldConfig.description && (
+        <small style={{ color: "#666", fontSize: "12px" }}>
+          {fieldConfig.description}
+        </small>
+      )}
+
+      {error?.message && (
+        <span
+          style={{
+            display: "block",
+            marginTop: "0.3rem",
+            color: "#e74c3c",
+            fontSize: "13px",
+          }}
+        >
+          {error.message}
+        </span>
+      )}
+    </div>
+  );
+};
 
 export default Textarea;

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { useFormField } from "@/lib/fieldRenderer/formField";
 import React, { SelectHTMLAttributes } from "react";
+import { ControllerRenderProps } from "react-hook-form";
 
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   fieldConfig?: {
@@ -10,7 +11,7 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
     className?: string;
     [key: string]: unknown;
   };
-  field?: any; // usually you get this from RHF's `Controller`
+  field?: ControllerRenderProps
 }
 
 export const Select: React.FC<SelectProps> = ({ field, fieldConfig }) => {
