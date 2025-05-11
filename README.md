@@ -1,252 +1,100 @@
-# FormFate Library Documentation
+# 🧠 FormFate Documentation
 
-`FormFate` is a powerful and flexible form rendering library that allows you to define forms using a JSON schema. It simplifies form creation and management by providing a declarative way to configure form fields, validation, conditional rendering, and custom components.
+This repository hosts the **FormFate** documentation site, built with [Docusaurus 2](https://docusaurus.io/), covering both web (`react-form-fate`) and native (`native-form-fate`) form-generation libraries.
 
-## Installation
+![FormFate Logo](static/img/formfate-logo.png)
 
-Install the `FormFate` library using npm:
+---
 
-```bash
-npm install react-form-fate
-```
+## ✨ Quick Overview
 
-## Usage
+**FormFate** lets you define forms via a JSON/TypeScript schema, providing:
 
-### Importing the Library
+* **Schema-Driven**: Declarative blocks and fields
+* **Built-In Logic**: Validation, conditional rendering, disabled state
+* **Async Data**: Dynamic options via `optionsUrl` + filtering
+* **Custom Components**: Plug in your own React or native inputs
+* **Cross-Platform**: Web and React Native support
 
-Import the `FormFate` component into your React application:
+---
+
+## 📦 Installation
+
+1. **Core Engine** (shared schema logic):
+
+   ```bash
+   npm install formfatecore
+   # or
+   yarn add formfatecore
+   ```
+
+2. **Web Starter**:
+
+   ```bash
+   npm install react-form-fate
+   # or
+   yarn add react-form-fate
+   ```
+
+3. **React Native Starter**:
+
+   ```bash
+   npm install native-form-fate
+   # or
+   yarn add native-form-fate
+   ```
+
+---
+
+## 🚀 Quick Start Example
 
 ```tsx
+import React from 'react';
 import { FormFate } from 'react-form-fate';
-```
+import { FormDefinition } from 'formfatecore';
+import { customComponents } from './customComponents';
 
-### Defining a Form Schema
-
-A form schema is a JSON object that defines the structure, fields, behavior, and UI of the form. Here's an example schema:
-
-```tsx
-const signupForm = {
-  name: "signupForm",
+const signupForm: FormDefinition = {
+  name: 'signupForm',
   properties: {
     personalInfo: {
-      type: "block",
-      title: "Personal Information",
+      type: 'block',
+      title: 'Personal Information',
       properties: {
         firstName: {
-          type: "text",
-          title: "First Name",
-          description: "Enter your first name",
+          type: 'text',
+          title: 'First Name',
           required: true,
-          default: "",
-          validator: (value: string) => {
-            if (value.length < 3) return "First name must be at least 3 characters long";
-            return true;
-          },
-        },
-        lastName: {
-          type: "text",
-          title: "Last Name",
-          description: "Enter your last name",
-          required: true,
-          default: "",
-          disabled: ({ formValues }: { formValues: Record<string, unknown> }) => {
-            const firstName = formValues.firstName as string;
-            return firstName?.length < 3 || firstName === undefined;
-          },
+          validator: v => v.length >= 3 || 'At least 3 chars',
         },
         gender: {
-          type: "radio",
-          title: "Gender",
-          description: "Select your gender",
-          required: true,
+          type: 'radio',
+          title: 'Gender',
           options: [
-            { value: "male", label: "Male" },
-            { value: "female", label: "Female" },
-            { value: "other", label: "Other" },
+            { value: 'male', label: 'Male' },
+            { value: 'female', label: 'Female' },
+            { value: 'other', label: 'Other' },
           ],
-        },
-        mentor: {
-          type: "select",
-          title: "Mentor",
-          description: "Select your mentor",
-          required: true,
-          default: "",
-          optionsUrl: {
-            url: "https://jsonplaceholder.typicode.com/users",
-            method: "GET",
-            mapper: ({ response }: { response: any }) => {
-              return response.map((user: { id: number; name: string }) => ({
-                value: user.id,
-                label: user.name,
-              }));
-            },
-          },
-        },
-      },
-    },
-    socialLinks: {
-      type: "block",
-      title: "Social Media Info",
-      properties: {
-        social: {
-          type: "select",
-          title: "Social",
-          description: "Select your social media",
-          required: true,
-          default: "",
-          options: [
-            { value: "linkedin", label: "LinkedIn" },
-            { value: "github", label: "GitHub" },
-            { value: "google", label: "Google" },
-            { value: "other", label: "Other" },
-          ],
-        },
-        linkedin: {
-          type: "text",
-          title: "LinkedIn",
-          description: "Enter your LinkedIn URL",
-          conditional: ({ formValues }: { formValues: Record<string, unknown> }) => {
-            return formValues.social === "linkedin";
-          },
-        },
-        github: {
-          type: "text",
-          title: "GitHub",
-          description: "Enter your GitHub URL",
-          conditional: { field: "social", equal: "github", state: true },
-        },
-        google: {
-          type: "text",
-          title: "Google",
-          description: "Enter your Google URL",
-          conditional: { field: "social", equal: "google", state: true },
-        },
-      },
-    },
-    accountInfo: {
-      type: "block",
-      title: "Account Credentials",
-      properties: {
-        email: {
-          type: "email",
-          title: "Email",
-          description: "Enter your email address",
-          required: true,
-        },
-        password: {
-          type: "password",
-          title: "Password",
-          description: "Enter your password",
-          required: true,
-        },
-        confirmPassword: {
-          type: "password",
-          title: "Confirm Password",
-          description: "Confirm your password",
-          required: true,
-          validator: (value: string, formValues: Record<string, unknown>) => {
-            if (value !== formValues.password) return "Passwords do not match";
-            return true;
-          },
-        },
-      },
-    },
-    customStuff: {
-      type: "block",
-      title: "Custom Field",
-      properties: {
-        fieldnameexample: {
-          type: "mycustomtype",
-          title: "My New Custom Type",
-          description: "Enter your custom value",
           required: true,
         },
       },
     },
   },
   buttons: [
-    { type: "submit", label: "Sign Up" },
-    { type: "reset", label: "Reset", variant: "destructive" },
+    { type: 'submit', label: 'Sign Up' },
+    { type: 'reset',  label: 'Reset', variant: 'destructive' },
   ],
 };
-```
-
-### Data Source for Select and Radio Fields
-
-The `optionsUrl` property allows you to dynamically fetch options for `select` or `radio` fields from a remote data source. This is particularly useful when the options depend on external APIs or dynamic data. Here's how it works:
-
-- **url**: The endpoint to fetch data from.
-- **method**: The HTTP method to use (e.g., `GET`, `POST`).
-- **mapper**: A function to transform the fetched data into the required format for the field options.
-
-Example:
-
-```tsx
-mentor: {
-  type: "select",
-  title: "Mentor",
-  description: "Select your mentor",
-  required: true,
-  default: "",
-  optionsUrl: {
-    url: "https://jsonplaceholder.typicode.com/users",
-    method: "GET",
-    mapper: ({ response }: { response: any }) => {
-      return response.map((user: { id: number; name: string }) => ({
-        value: user.id,
-        label: user.name,
-      }));
-    },
-  },
-},
-```
-
-### Custom Components
-
-You can extend `FormFate` with your own custom components by using the `components` prop:
-
-```tsx
-const customComponents: CustomComponents = {
-  mycustomtype: ({ fieldConfig, ...props }) => (
-    <div style={{ marginBottom: "1rem" }}>
-      <label htmlFor={props.name} style={{ fontSize: "20px", fontWeight: "bold" }}>
-        {fieldConfig.title}
-      </label>
-      <input
-        type="text"
-        {...props}
-        style={{
-          padding: "0.5rem",
-          borderRadius: "0.375rem",
-          border: "1px solid #ccc",
-          width: "100%",
-        }}
-        placeholder={fieldConfig.description}
-      />
-    </div>
-  ),
-};
-```
-
-### Rendering the Form
-
-Render the form using the `FormFate` component:
-
-```tsx
-import React from "react";
-import { FormFate } from 'react-form-fate';
 
 export default function App() {
-  const onSubmit = (data: Record<string, unknown>) => {
-    console.log("Form Submitted Data:", data);
-  };
+  const handleSubmit = data => console.log('Submitted:', data);
 
   return (
-    <div style={{ width: "600px", margin: "50px auto" }}>
-      <h1 style={{ textAlign: "center" }}>Sign Up</h1>
+    <div style={{ maxWidth: 600, margin: '2rem auto' }}>
+      <h1>Sign Up</h1>
       <FormFate
         formDefinition={signupForm}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         components={customComponents}
       />
     </div>
@@ -254,40 +102,44 @@ export default function App() {
 }
 ```
 
-### Conditional Rendering
+---
 
-Fields can be conditionally rendered based on other field values using the `conditional` property:
+## 🔧 Schema Reference
 
-```tsx
-linkedin: {
-  type: "text",
-  title: "LinkedIn URL",
-  description: "Enter your LinkedIn URL",
-  conditional: ({ formValues }: { formValues: Record<string, unknown> }) => {
-    return formValues.social === "linkedin";
-  },
+* **Blocks**: group fields
+* **Field Types**: `text`, `textarea`, `email`, `password`, `select`, `radio`, `checkbox`, **custom**
+* **Props**: `title`, `description`, `required`, `default`, `validator`, `disabled`, `conditional`, `valueCallback`
+
+### Dynamic Options
+
+```ts
+optionsUrl: {
+  url: 'https://api.example.com/items',
+  method: 'GET',
+  mapper: ({ response }) => response.map(i => ({ value: i.id, label: i.name })),
 },
+filterFunction: ({ options, formValues }) =>
+  options.filter(o => o.label.includes(formValues.searchTerm || '')), 
 ```
-
-### Buttons
-
-The `buttons` array in the schema defines the available form buttons, with support for types like `submit`, `reset`, and more:
-
-```tsx
-buttons: [
-  { type: "submit", label: "Sign Up" },
-  { type: "reset", label: "Reset", variant: "destructive" },
-],
-```
-
-## Customization
-
-- **Custom Field Types**: Add custom rendering logic via the `components` prop.
-- **Custom Validation**: Integrate your own validation logic.
-
-
 
 ---
 
-Feel free to contribute or report issues on the official [GitHub repository](https://github.com/mazenhadjali/react-form-fate).
+## 🌐 React Native Support
 
+Use the same schema with:
+
+```tsx
+import { FormFate as NativeFormFate } from 'native-form-fate';
+```
+
+---
+
+## 🎉 Contributing
+
+Issues and PRs welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
+## 📄 License
+
+[MIT](LICENSE) © Proxym Group
